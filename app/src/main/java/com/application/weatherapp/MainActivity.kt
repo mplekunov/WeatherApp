@@ -10,28 +10,23 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterStart
-import androidx.compose.ui.Alignment.Companion.TopEnd
-import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.application.weatherapp.ui.theme.WeatherAppTheme
+import com.application.weatherapp.viewmodel.DateTimeViewModel
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class MainActivity : ComponentActivity() {
 
@@ -81,16 +76,24 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun WeatherOverview(
+    fun CurrentWeatherWidget(
         currentWeather: Weather,
-        modifier: Modifier
-    ) {
+        modifier: Modifier,
+        viewModel: DateTimeViewModel = viewModel()
+        ) {
+        val currentDate = viewModel.date.observeAsState()
+        val currentTime = viewModel.time.observeAsState()
+
         Column {
-            CurrentDateOverview(modifier)
+            DateTimeOverview(
+                date = currentDate.value ?: "June 5, 2022",
+                time = currentTime.value ?: "10:55",
+                modifier = modifier
+            )
 
             CurrentWeatherOverview(
-                currentWeather,
-                modifier
+                currentWeather = currentWeather,
+                modifier = modifier
             )
         }
     }
@@ -100,17 +103,23 @@ class MainActivity : ComponentActivity() {
         currentWeather: Weather,
         modifier: Modifier
     ) {
-
+        // Day/Night Temperatures
         Text(
             text = "Day ${currentWeather.dayTemperature.toInt()} Night ${currentWeather.nightTemperature.toInt()}",
             modifier = modifier
         )
+
+        // Current Weather Info
         Box(
             modifier
                 .fillMaxWidth()
                 .padding(end = 20.dp)
         ) {
-            Column(modifier.align(BottomStart)) {
+            // First Column is current/feeling temperature
+            Column(
+                modifier
+                    .align(BottomStart)
+            ) {
                 Text(
                     text = "${currentWeather.currentTemperature.toInt()}",
                     fontSize = 86.sp,
@@ -119,11 +128,16 @@ class MainActivity : ComponentActivity() {
                 Text(
                     text = "Feels like ${currentWeather.feelingTemperature.toInt()}",
                     fontSize = 12.sp,
-                    modifier = Modifier.align(CenterHorizontally)
+                    modifier = Modifier
+                        .align(CenterHorizontally)
                 )
             }
 
-            Column(modifier.align(BottomEnd)) {
+            // Second Column is Weather Forecast (Icon/Description)
+            Column(
+                modifier
+                    .align(BottomEnd)
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_rainy),
                     contentDescription = "Rainy",
@@ -134,32 +148,30 @@ class MainActivity : ComponentActivity() {
                 Text(
                     text = "Rain",
                     fontSize = 12.sp,
-                    modifier = Modifier.align(CenterHorizontally)
+                    modifier = Modifier
+                        .align(CenterHorizontally)
                 )
             }
         }
     }
 
     @Composable
-    fun CurrentDateOverview(
+    fun DateTimeOverview(
+        date: String,
+        time: String,
         modifier: Modifier
     ) {
+        //
         Box(
             modifier
                 .fillMaxWidth()
         ) {
             Text(
-                text = LocalDateTime.now().format(
-                    DateTimeFormatter.ofLocalizedDate(
-                        FormatStyle.LONG
-                    )
-                )
+                text = date
             )
 
             Text(
-                text = LocalDateTime.now().format(
-                    DateTimeFormatter.ofPattern("HH:mm")
-                ),
+                text = time,
                 modifier = Modifier.align(CenterEnd)
             )
         }
@@ -173,7 +185,7 @@ class MainActivity : ComponentActivity() {
                     .padding(all = 8.dp)
             ) {}
 
-            WeatherOverview(
+            CurrentWeatherWidget(
                 modifier = Modifier.padding(
                     start = 16.dp,
                     end = 16.dp,
