@@ -1,4 +1,4 @@
-package com.application.weatherapp
+package com.application.weatherapp.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,8 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.application.weatherapp.R
+import com.application.weatherapp.model.Weather
+import com.application.weatherapp.model.WeatherType
 import com.application.weatherapp.ui.theme.WeatherAppTheme
 import com.application.weatherapp.viewmodel.DateTimeViewModel
 import java.time.LocalDate
