@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,7 @@ import com.application.weatherapp.model.Weather
 import com.application.weatherapp.model.WeatherType
 import com.application.weatherapp.ui.theme.WeatherAppTheme
 import com.application.weatherapp.viewmodel.DateTimeViewModel
+import com.application.weatherapp.viewmodel.WeatherViewModel
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
@@ -65,7 +67,7 @@ class MainActivity : ComponentActivity() {
                 )
             },
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.surface,
+                containerColor = MaterialTheme.colorScheme.onPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -79,10 +81,10 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun CurrentWeatherWidget(
-        currentWeather: Weather,
+        currentWeather: Weather?,
         modifier: Modifier,
         viewModel: DateTimeViewModel = viewModel()
-        ) {
+    ) {
         val currentDate = viewModel.date.observeAsState()
         val currentTime = viewModel.time.observeAsState()
 
@@ -94,7 +96,14 @@ class MainActivity : ComponentActivity() {
             )
 
             CurrentWeatherOverview(
-                currentWeather = currentWeather,
+                currentWeather = currentWeather ?: Weather(
+                    LocalDate.now(),
+                    0F,
+                    0F,
+                    0F,
+                    0F,
+                    WeatherType.SUNNY
+                ),
                 modifier = modifier
             )
         }
@@ -141,19 +150,48 @@ class MainActivity : ComponentActivity() {
                     .align(BottomEnd)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_rainy),
-                    contentDescription = "Rainy",
+                    painter = getWeatherIconPainter(weatherType = currentWeather.weatherType),
+                    contentDescription = currentWeather.weatherDescription,
                     modifier = Modifier
                         .size(100.dp)
                 )
 
                 Text(
-                    text = "Rain",
+                    text = currentWeather.weatherDescription,
                     fontSize = 12.sp,
                     modifier = Modifier
                         .align(CenterHorizontally)
                 )
             }
+        }
+    }
+
+    @Composable
+    fun getWeatherIconPainter(weatherType: WeatherType): Painter {
+        return when (weatherType) {
+            WeatherType.WINDY -> painterResource(R.drawable.ic_windy)
+            WeatherType.TORNADO -> painterResource(R.drawable.ic_tornado)
+            WeatherType.HURRICANE -> painterResource(R.drawable.ic_hurricane)
+
+            WeatherType.CLOUDY -> painterResource(R.drawable.ic_cloudy)
+            WeatherType.PARTLY_CLOUDY_DAY -> painterResource(R.drawable.ic_day_partly_cloudy)
+            WeatherType.PARTLY_CLOUDY_NIGHT -> painterResource(R.drawable.ic_night_partly_cloudy)
+            WeatherType.FOGGY -> painterResource(R.drawable.ic_foggy)
+
+            WeatherType.SUNNY -> painterResource(R.drawable.ic_sunny)
+            WeatherType.HAZY -> painterResource(R.drawable.ic_hazy)
+
+            WeatherType.SNOWY -> painterResource(R.drawable.ic_snowy)
+            WeatherType.SNOWY_RAINY -> painterResource(R.drawable.ic_snowy_rainy)
+            WeatherType.PARTLY_SNOWY -> painterResource(R.drawable.ic_partly_snowy)
+            WeatherType.PARTLY_SNOWY_RAINY -> painterResource(R.drawable.ic_partly_snowy_rainy)
+            WeatherType.HEAVY_SNOW -> painterResource(R.drawable.ic_heavy_snow)
+
+            WeatherType.RAINY -> painterResource(R.drawable.ic_rainy)
+            WeatherType.PARTLY_RAINY -> painterResource(R.drawable.ic_partly_rainy)
+            WeatherType.HEAVY_RAIN -> painterResource(R.drawable.ic_heavy_rain)
+            WeatherType.THUNDERSTORM -> painterResource(R.drawable.ic_thunderstorm)
+            WeatherType.PARTLY_THUNDERSTORM -> painterResource(R.drawable.ic_partly_thunderstorm)
         }
     }
 
@@ -180,7 +218,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun Home() {
+    fun Home(
+        weatherViewModel: WeatherViewModel = viewModel()
+    ) {
         Column {
             SearchLocationBar(
                 modifier = Modifier
@@ -194,12 +234,10 @@ class MainActivity : ComponentActivity() {
                     top = 10.dp,
                     bottom = 10.dp
                 ),
-                currentWeather = weatherTest
+                currentWeather = weatherViewModel.currentWeather.value
             )
         }
     }
-
-    val weatherTest = Weather(LocalDate.now(), 10F, 20F, 15F, 18F, WeatherType.Rainy)
 
     @Preview
     @Composable
