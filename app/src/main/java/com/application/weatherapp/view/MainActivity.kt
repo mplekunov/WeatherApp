@@ -1,6 +1,7 @@
 package com.application.weatherapp.view
 
 import android.graphics.Paint
+import android.graphics.PathMeasure
 import android.graphics.PointF
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,12 +24,9 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -264,7 +262,7 @@ class MainActivity : ComponentActivity() {
                 CurrentWeatherHourlyForecastWidget(
                     modifier = Modifier
                         .padding(
-                            top = 400.dp,
+                            top = 340.dp,
                             start = 16.dp,
                             bottom = 10.dp
                         )
@@ -274,12 +272,12 @@ class MainActivity : ComponentActivity() {
     }
 
     val test = mutableListOf(
-        Weather(LocalDateTime.now(), 10F, 23F, WeatherType.CLOUDY),
+        Weather(LocalDateTime.now(), 10F, 0F, WeatherType.CLOUDY),
         Weather(LocalDateTime.now().plusHours(1), 24F, 24F, WeatherType.SUNNY),
         Weather(LocalDateTime.now().plusHours(2), 26F, 26F, WeatherType.SNOWY),
         Weather(LocalDateTime.now().plusHours(3), 27F, 27F, WeatherType.THUNDERSTORM),
         Weather(LocalDateTime.now().plusHours(4), 29F, 29F, WeatherType.PARTLY_CLOUDY_DAY),
-        Weather(LocalDateTime.now().plusHours(5), 28F, 28F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(5), 25F, 0F, WeatherType.SNOWY),
         Weather(LocalDateTime.now().plusHours(6), 28F, 28F, WeatherType.TORNADO),
         Weather(LocalDateTime.now().plusHours(7), 29F, 29F, WeatherType.SNOWY),
         Weather(LocalDateTime.now().plusHours(8), 30F, 30F, WeatherType.SNOWY),
@@ -302,14 +300,15 @@ class MainActivity : ComponentActivity() {
 
     private fun calculateYCoordinate(
         maxValue: Float,
+        minValue: Float,
         currentValue: Float,
         canvasHeight: Float
     ): Float {
-        val maxAndCurrentValueDifference = (maxValue - currentValue)
+        val realValue = (maxValue - currentValue)
 
-        val relativePercentageOfScreen = (canvasHeight / maxValue)
+        val distanceOnCanvasPerValue = (canvasHeight / (maxValue - minValue))
 
-        return maxAndCurrentValueDifference * relativePercentageOfScreen
+        return realValue * distanceOnCanvasPerValue
     }
 
     @Composable
@@ -328,50 +327,58 @@ class MainActivity : ComponentActivity() {
             currentWeather.hourlyForecast!!.stream().map { it.currentTemperature }.toList()
                 .maxOrNull() ?: 0F
 
+        val minValue =
+            currentWeather.hourlyForecast!!.stream().map { it.currentTemperature }.toList()
+                .minOrNull() ?: 0F
+
         var columnSize by remember { mutableStateOf(Size.Zero) }
 
-        var color = MaterialTheme.colorScheme.onPrimary
+        val color = MaterialTheme.colorScheme.onPrimary
 
         LazyRow(
             modifier = modifier
         ) {
             itemsIndexed(currentWeather.hourlyForecast!!) { index, weather ->
-
                 Column(modifier = Modifier) {
                     Canvas(modifier = Modifier) {
-                        val currentWeatherTemperature = weather.currentTemperature
+                        val currentValue = weather.currentTemperature
 
-                        var nextWeatherTemperature =
+                        var nextValue =
                             currentWeather.hourlyForecast!!.first().currentTemperature
 
                         if (currentWeather.hourlyForecast!!.lastIndex >= index + 1)
-                            nextWeatherTemperature =
+                            nextValue =
                                 currentWeather.hourlyForecast!![index + 1].currentTemperature
 
-                        val prevWeatherTemperature =
+                        val prevValue =
                             if (index == 0) currentWeather.hourlyForecast!!.last().currentTemperature
                             else currentWeather.hourlyForecast!![index - 1].currentTemperature
 
                         val startX = 0F
                         val endX = startX + columnSize.width
-                        val midX = endX / 2
+                        val midX = (endX + startX) / 2
+
+                        val maxY = 150.dp.toPx()
 
                         val startY = calculateYCoordinate(
                             maxValue,
-                            (prevWeatherTemperature + currentWeatherTemperature) / 2,
-                            280.dp.toPx()
+                            minValue,
+                            (prevValue + currentValue) / 2,
+                            maxY
                         )
 
-                        val midY = calculateYCoordinate(
+                        var midY = calculateYCoordinate(
                             maxValue,
-                            currentWeatherTemperature,
-                            280.dp.toPx()
+                            minValue,
+                            currentValue,
+                            maxY
                         )
 
                         val endY = calculateYCoordinate(
                             maxValue,
-                            (nextWeatherTemperature + currentWeatherTemperature) / 2,
-                            280.dp.toPx()
+                            minValue,
+                            (nextValue + currentValue) / 2,
+                            maxY
                         )
 
                         val conPoint1 = PointF((midX + startX) / 2, startY)
@@ -381,74 +388,144 @@ class MainActivity : ComponentActivity() {
                         val conPoint4 = PointF((endX + midX) / 2, endY)
 
                         val filledPath = Path().apply {
-                            moveTo(startX, 80.dp.toPx())
+                            moveTo(startX, maxY)
                             lineTo(startX, startY)
-                            cubicTo(
-                                conPoint1.x, conPoint1.y,
-                                conPoint2.x, conPoint2.y,
-                                midX, midY
-                            )
-                            cubicTo(
-                                conPoint3.x, conPoint3.y,
-                                conPoint4.x, conPoint4.y,
+
+                            quadraticBezierTo(
+                                midX, midY,
                                 endX, endY
                             )
-                            lineTo(endX, 80.dp.toPx())
+
+//                            cubicTo(
+//                                conPoint1.x, conPoint1.y,
+//                                conPoint2.x, conPoint2.y,
+//                                midX, midY
+//                            )
+//                            cubicTo(
+//                                conPoint3.x, conPoint3.y,
+//                                conPoint4.x, conPoint4.y,
+//                                endX, endY
+//                            )
+                            lineTo(endX, maxY)
                             close()
                         }
 
                         val graphPath = Path().apply {
                             moveTo(startX, startY)
-                            cubicTo(
-                                conPoint1.x, conPoint1.y,
-                                conPoint2.x, conPoint2.y,
-                                midX, midY
-                            )
-                            cubicTo(
-                                conPoint3.x, conPoint3.y,
-                                conPoint4.x, conPoint4.y,
+
+                            quadraticBezierTo(
+                                midX, midY,
                                 endX, endY
                             )
+//                            cubicTo(
+//                                conPoint1.x, conPoint1.y,
+//                                conPoint2.x, conPoint2.y,
+//                                midX, midY
+//                            )
+//                            cubicTo(
+//                                conPoint3.x, conPoint3.y,
+//                                conPoint4.x, conPoint4.y,
+//                                endX, endY
+//                            )
                         }
+
+                        val pathMeasure = PathMeasure(graphPath.asAndroidPath(), false)
+                        val pos = FloatArray(2)
+
+                        pathMeasure.getPosTan(pathMeasure.length / 2, pos, null)
+
+                        midY = pos[1]
 
                         drawPath(
                             path = filledPath,
-                            color = Color.Gray.copy(alpha = 0.20F),
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Gray.copy(alpha = 0.7f),
+                                    Color.Gray.copy(alpha = 0.6f),
+                                    Color.Gray.copy(alpha = 0.5f),
+                                    Color.Gray.copy(alpha = 0.4f),
+                                    Color.Gray.copy(alpha = 0.3f),
+                                    Color.Gray.copy(alpha = 0.2f),
+                                    Color.Gray.copy(alpha = 0.1f),
+                                    Color.Gray.copy(alpha = 0f)
+                                ),
+                                startY,
+                                maxY
+                            ),
                             style = Fill
                         )
 
                         drawPath(
                             path = graphPath,
                             color = color,
-                            style = Stroke(2F)
+                            style = Stroke(6F)
                         )
 
                         drawLine(
-                            start = Offset(startX, 80.dp.toPx()),
-                            end = Offset(startX, startY),
-                            color = color
+                            start = Offset(startX, startY),
+                            end = Offset(startX, maxY),
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    color.copy(alpha = 0.7f),
+                                    color.copy(alpha = 0.6f),
+                                    color.copy(alpha = 0.5f),
+                                    color.copy(alpha = 0.4f),
+                                    color.copy(alpha = 0.3f),
+                                    color.copy(alpha = 0.2f),
+                                    color.copy(alpha = 0.1f),
+                                    color.copy(alpha = 0f)
+                                ),
+                                startY,
+                                maxY
+                            )
                         )
 
                         drawLine(
-                            start = Offset(midX, 80.dp.toPx()),
-                            end = Offset(midX, midY),
-                            color = color,
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 10f), 0f)
+                            start = Offset(midX, midY),
+                            end = Offset(midX, maxY),
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    color.copy(alpha = 0.7f),
+                                    color.copy(alpha = 0.6f),
+                                    color.copy(alpha = 0.5f),
+                                    color.copy(alpha = 0.4f),
+                                    color.copy(alpha = 0.3f),
+                                    color.copy(alpha = 0.2f),
+                                    color.copy(alpha = 0.1f),
+                                    color.copy(alpha = 0f)
+                                ),
+                                startY,
+                                maxY
+                            ),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 10f), 20f)
                         )
 
                         drawLine(
-                            start = Offset(endX, 80.dp.toPx()),
-                            end = Offset(endX, endY),
-                            color = color
+                            start = Offset(endX, endY),
+                            end = Offset(endX, maxY),
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    color.copy(alpha = 0.7f),
+                                    color.copy(alpha = 0.6f),
+                                    color.copy(alpha = 0.5f),
+                                    color.copy(alpha = 0.4f),
+                                    color.copy(alpha = 0.3f),
+                                    color.copy(alpha = 0.2f),
+                                    color.copy(alpha = 0.1f),
+                                    color.copy(alpha = 0f)
+                                ),
+                                startY,
+                                maxY
+                            )
                         )
 
                         drawContext.canvas.nativeCanvas.apply {
                             drawText(
-                                "${currentWeatherTemperature.toInt()}",
+                                "${currentValue.toInt()}",
                                 midX,
-                                midY - 10,
+                                midY - 60,
                                 Paint().apply {
-                                    textSize = 20F
+                                    textSize = 34F
                                     textAlign = Paint.Align.CENTER
                                 }
                             )
@@ -456,7 +533,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Column(modifier = Modifier
-                        .padding(top = 90.dp)
+                        .padding(top = 150.dp)
                         .onGloballyPositioned {
                             columnSize = it.size.toSize()
                         }
