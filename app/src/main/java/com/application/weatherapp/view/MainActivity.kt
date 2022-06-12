@@ -1,5 +1,6 @@
 package com.application.weatherapp.view
 
+import android.graphics.PointF
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +26,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -271,30 +274,30 @@ class MainActivity : ComponentActivity() {
     }
 
     val test = mutableListOf(
-        Weather(LocalDateTime.now(), 10F, 12F, WeatherType.CLOUDY),
-        Weather(LocalDateTime.now().plusHours(1), 13F, 9F, WeatherType.SUNNY),
-        Weather(LocalDateTime.now().plusHours(2), 10F, 11F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(3), 10F, 4F, WeatherType.THUNDERSTORM),
-        Weather(LocalDateTime.now().plusHours(4), 10F, 2F, WeatherType.PARTLY_CLOUDY_DAY),
-        Weather(LocalDateTime.now().plusHours(5), 10F, 10F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(6), 10F, 20F, WeatherType.TORNADO),
-        Weather(LocalDateTime.now().plusHours(7), 10F, 22F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(8), 10F, 12F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(9), 10F, 4F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(10), 10F, 1F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(11), 10F, 40F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(12), 10F, 12F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(13), 10F, 15F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(14), 10F, 19F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(15), 10F, 20F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(16), 10F, 22F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(17), 10F, 12F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(18), 10F, 14F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(19), 10F, 9F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(20), 10F, 10F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(21), 10F, 0F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(22), 10F, 8F, WeatherType.SNOWY),
-        Weather(LocalDateTime.now().plusHours(23), 10F, 10F, WeatherType.SNOWY)
+        Weather(LocalDateTime.now(), 10F, 23F, WeatherType.CLOUDY),
+        Weather(LocalDateTime.now().plusHours(1), 24F, 24F, WeatherType.SUNNY),
+        Weather(LocalDateTime.now().plusHours(2), 26F, 26F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(3), 27F, 27F, WeatherType.THUNDERSTORM),
+        Weather(LocalDateTime.now().plusHours(4), 29F, 29F, WeatherType.PARTLY_CLOUDY_DAY),
+        Weather(LocalDateTime.now().plusHours(5), 28F, 28F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(6), 28F, 28F, WeatherType.TORNADO),
+        Weather(LocalDateTime.now().plusHours(7), 29F, 29F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(8), 30F, 30F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(9), 29F, 29F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(10), 29F, 29F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(11), 29F, 29F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(12), 28F, 28F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(13), 27F, 27F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(14), 26F, 26F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(15), 26F, 26F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(16), 25F, 25F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(17), 24F, 24F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(18), 24F, 24F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(19), 24F, 24F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(20), 23F, 23F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(21), 23F, 23F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(22), 23F, 23F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(23), 24F, 24F, WeatherType.SNOWY)
     )
 
     private fun calculateYCoordinate(
@@ -336,8 +339,7 @@ class MainActivity : ComponentActivity() {
 
                 Column(modifier = Modifier) {
                     Canvas(modifier = Modifier) {
-                        val startX = 0F
-                        val endX = startX + columnSize.width
+                        val currentWeatherTemperature = weather.currentTemperature
 
                         var nextWeatherTemperature =
                             currentWeather.hourlyForecast!!.first().currentTemperature
@@ -346,25 +348,64 @@ class MainActivity : ComponentActivity() {
                             nextWeatherTemperature =
                                 currentWeather.hourlyForecast!![index + 1].currentTemperature
 
-                        drawLine(
-                            start = Offset(
-                                x = startX,
-                                y = calculateYCoordinate(
-                                    maxValue,
-                                    weather.currentTemperature,
-                                    50.dp.toPx()
-                                )
-                            ),
-                            end = Offset(
-                                x = endX,
-                                y = calculateYCoordinate(
-                                    maxValue,
-                                    nextWeatherTemperature,
-                                    50.dp.toPx()
-                                )
-                            ),
-                            color = color,
-                            strokeWidth = Stroke.DefaultMiter
+                        val prevWeatherTemperature =
+                            if (index == 0) currentWeather.hourlyForecast!!.last().currentTemperature
+                            else currentWeather.hourlyForecast!![index - 1].currentTemperature
+
+                        val startX = 0F
+                        val endX = startX + columnSize.width
+                        val midX = endX / 2
+
+                        val startY = calculateYCoordinate(
+                            maxValue,
+                            (prevWeatherTemperature + currentWeatherTemperature) / 2,
+                            280.dp.toPx()
+                        )
+
+                        val midY = calculateYCoordinate(
+                            maxValue,
+                            currentWeatherTemperature,
+                            280.dp.toPx()
+                        )
+
+                        val endY = calculateYCoordinate(
+                            maxValue,
+                            (nextWeatherTemperature + currentWeatherTemperature) / 2,
+                            280.dp.toPx()
+                        )
+
+                        val conPoint1 = PointF((midX + startX) / 2, startY)
+                        val conPoint2 = PointF((midX + startX) / 2, midY)
+
+                        val conPoint3 = PointF((endX + midX) / 2, midY)
+                        val conPoint4 = PointF((endX + midX) / 2, endY)
+
+                        val firstPath = Path()
+                        firstPath.moveTo(startX, startY)
+                        firstPath.cubicTo(
+                            conPoint1.x, conPoint1.y,
+                            conPoint2.x, conPoint2.y,
+                            midX, midY
+                        )
+
+                        val secondPath = Path()
+                        secondPath.moveTo(midX, midY)
+                        secondPath.cubicTo(
+                            conPoint3.x, conPoint3.y,
+                            conPoint4.x, conPoint4.y,
+                            endX, endY
+                        )
+
+                        drawPath(
+                            path = firstPath,
+                            color = Color.Green,
+                            style = Stroke(4F)
+                        )
+
+                        drawPath(
+                            path = secondPath,
+                            color = Color.Red,
+                            style = Stroke(4F)
                         )
                     }
 
