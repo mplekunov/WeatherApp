@@ -3,34 +3,47 @@ package com.application.weatherapp.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.application.weatherapp.R
+import com.application.weatherapp.model.DailyWeather
 import com.application.weatherapp.model.Weather
 import com.application.weatherapp.model.WeatherType
 import com.application.weatherapp.ui.theme.WeatherAppTheme
 import com.application.weatherapp.viewmodel.DateTimeViewModel
 import com.application.weatherapp.viewmodel.WeatherViewModel
-import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.streams.toList
 
 class MainActivity : ComponentActivity() {
 
@@ -81,7 +94,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun CurrentWeatherWidget(
-        currentWeather: Weather?,
+        currentWeather: DailyWeather?,
         modifier: Modifier,
         viewModel: DateTimeViewModel = viewModel()
     ) {
@@ -96,10 +109,8 @@ class MainActivity : ComponentActivity() {
             )
 
             CurrentWeatherOverview(
-                currentWeather = currentWeather ?: Weather(
-                    LocalDate.now(),
-                    0F,
-                    0F,
+                currentWeather = currentWeather ?: DailyWeather(
+                    LocalDateTime.now(),
                     0F,
                     0F,
                     WeatherType.SUNNY
@@ -111,7 +122,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun CurrentWeatherOverview(
-        currentWeather: Weather,
+        currentWeather: DailyWeather,
         modifier: Modifier
     ) {
         // Day/Night Temperatures
@@ -221,21 +232,164 @@ class MainActivity : ComponentActivity() {
     fun Home(
         weatherViewModel: WeatherViewModel = viewModel()
     ) {
-        Column {
-            SearchLocationBar(
+        Surface(
+            color = MaterialTheme.colorScheme.primary
+        ) {
+            Column(
                 modifier = Modifier
-                    .padding(all = 8.dp)
-            ) {}
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Column(
+                    modifier = Modifier
+                ) {
+                    SearchLocationBar(
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                    ) {}
 
-            CurrentWeatherWidget(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 10.dp,
-                    bottom = 10.dp
-                ),
-                currentWeather = weatherViewModel.currentWeather.value
-            )
+                    CurrentWeatherWidget(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 10.dp,
+                            bottom = 10.dp
+                        ),
+                        currentWeather = weatherViewModel.currentWeather.value
+                    )
+                }
+
+                CurrentWeatherHourlyForecastWidget(
+                    modifier = Modifier
+                        .padding(
+                            top = 400.dp,
+                            start = 16.dp,
+                            bottom = 10.dp
+                        )
+                )
+            }
+        }
+    }
+
+    val test = mutableListOf(
+        Weather(LocalDateTime.now(), 10F, 12F, WeatherType.CLOUDY),
+        Weather(LocalDateTime.now().plusHours(1), 13F, 9F, WeatherType.SUNNY),
+        Weather(LocalDateTime.now().plusHours(2), 10F, 11F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(3), 10F, 4F, WeatherType.THUNDERSTORM),
+        Weather(LocalDateTime.now().plusHours(4), 10F, 2F, WeatherType.PARTLY_CLOUDY_DAY),
+        Weather(LocalDateTime.now().plusHours(5), 10F, 10F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(6), 10F, 20F, WeatherType.TORNADO),
+        Weather(LocalDateTime.now().plusHours(7), 10F, 22F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(8), 10F, 12F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(9), 10F, 4F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(10), 10F, 1F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(11), 10F, 40F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(12), 10F, 12F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(13), 10F, 15F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(14), 10F, 19F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(15), 10F, 20F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(16), 10F, 22F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(17), 10F, 12F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(18), 10F, 14F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(19), 10F, 9F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(20), 10F, 10F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(21), 10F, 0F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(22), 10F, 8F, WeatherType.SNOWY),
+        Weather(LocalDateTime.now().plusHours(23), 10F, 10F, WeatherType.SNOWY)
+    )
+
+    private fun calculateYCoordinate(
+        maxValue: Float,
+        currentValue: Float,
+        canvasHeight: Float
+    ): Float {
+        val maxAndCurrentValueDifference = (maxValue - currentValue)
+
+        val relativePercentageOfScreen = (canvasHeight / maxValue)
+
+        return maxAndCurrentValueDifference * relativePercentageOfScreen
+    }
+
+    @Composable
+    fun CurrentWeatherHourlyForecastWidget(
+        modifier: Modifier = Modifier,
+        currentWeather: DailyWeather = DailyWeather(
+            LocalDateTime.now(),
+            10F,
+            10F,
+            WeatherType.SUNNY
+        )
+    ) {
+        currentWeather.hourlyForecast = test
+
+        val maxValue =
+            currentWeather.hourlyForecast!!.stream().map { it.currentTemperature }.toList()
+                .maxOrNull() ?: 0F
+
+        var columnSize by remember { mutableStateOf(Size.Zero) }
+
+        val color = MaterialTheme.colorScheme.onPrimary
+
+        LazyRow(
+            modifier = modifier
+        ) {
+            itemsIndexed(currentWeather.hourlyForecast!!) { index, weather ->
+
+                Column(modifier = Modifier) {
+                    Canvas(modifier = Modifier) {
+                        val startX = 0F
+                        val endX = startX + columnSize.width
+
+                        var nextWeatherTemperature =
+                            currentWeather.hourlyForecast!!.first().currentTemperature
+
+                        if (currentWeather.hourlyForecast!!.lastIndex >= index + 1)
+                            nextWeatherTemperature =
+                                currentWeather.hourlyForecast!![index + 1].currentTemperature
+
+                        drawLine(
+                            start = Offset(
+                                x = startX,
+                                y = calculateYCoordinate(
+                                    maxValue,
+                                    weather.currentTemperature,
+                                    50.dp.toPx()
+                                )
+                            ),
+                            end = Offset(
+                                x = endX,
+                                y = calculateYCoordinate(
+                                    maxValue,
+                                    nextWeatherTemperature,
+                                    50.dp.toPx()
+                                )
+                            ),
+                            color = color,
+                            strokeWidth = Stroke.DefaultMiter
+                        )
+                    }
+
+                    Column(modifier = Modifier
+                        .padding(top = 90.dp)
+                        .onGloballyPositioned {
+                            columnSize = it.size.toSize()
+                        }
+                    ) {
+                        Icon(
+                            painter = getWeatherIconPainter(weatherType = weather.weatherType),
+                            contentDescription = weather.weatherDescription,
+                            modifier = Modifier
+                                .size(48.dp)
+                        )
+
+                        Text(
+                            text = "${weather.date.hour}",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .align(CenterHorizontally)
+                        )
+                    }
+                }
+            }
         }
     }
 

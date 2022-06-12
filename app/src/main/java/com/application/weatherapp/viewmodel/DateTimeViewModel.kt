@@ -29,7 +29,7 @@ class DateTimeViewModel : ViewModel() {
                 _liveDate.value = localDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
                 _liveTime.value = localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
 
-                delay(60000L)
+                delay(5000L)
             }
         }
     }

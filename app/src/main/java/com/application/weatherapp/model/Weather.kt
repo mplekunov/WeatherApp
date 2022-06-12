@@ -1,16 +1,15 @@
 package com.application.weatherapp.model
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 
-class Weather(
-    val date: LocalDate,
-    val dayTemperature: Float,
-    val nightTemperature: Float,
+open class Weather(
+    val date: LocalDateTime,
     val feelingTemperature: Float,
     val currentTemperature: Float,
     val weatherType: WeatherType
     ) {
+
     val weatherDescription get() = when(weatherType) {
         WeatherType.WINDY -> "Windy"
         WeatherType.RAINY -> "Rainy"
@@ -32,4 +31,6 @@ class Weather(
         WeatherType.HURRICANE -> "Hurricane"
         WeatherType.TORNADO -> "Tornado"
     }
+
+
 }
