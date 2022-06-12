@@ -1,5 +1,6 @@
 package com.application.weatherapp.view
 
+import android.graphics.Paint
 import android.graphics.PointF
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.CenterEnd
@@ -24,11 +23,12 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -330,7 +330,7 @@ class MainActivity : ComponentActivity() {
 
         var columnSize by remember { mutableStateOf(Size.Zero) }
 
-        val color = MaterialTheme.colorScheme.onPrimary
+        var color = MaterialTheme.colorScheme.onPrimary
 
         LazyRow(
             modifier = modifier
@@ -380,33 +380,79 @@ class MainActivity : ComponentActivity() {
                         val conPoint3 = PointF((endX + midX) / 2, midY)
                         val conPoint4 = PointF((endX + midX) / 2, endY)
 
-                        val firstPath = Path()
-                        firstPath.moveTo(startX, startY)
-                        firstPath.cubicTo(
-                            conPoint1.x, conPoint1.y,
-                            conPoint2.x, conPoint2.y,
-                            midX, midY
-                        )
+                        val filledPath = Path().apply {
+                            moveTo(startX, 80.dp.toPx())
+                            lineTo(startX, startY)
+                            cubicTo(
+                                conPoint1.x, conPoint1.y,
+                                conPoint2.x, conPoint2.y,
+                                midX, midY
+                            )
+                            cubicTo(
+                                conPoint3.x, conPoint3.y,
+                                conPoint4.x, conPoint4.y,
+                                endX, endY
+                            )
+                            lineTo(endX, 80.dp.toPx())
+                            close()
+                        }
 
-                        val secondPath = Path()
-                        secondPath.moveTo(midX, midY)
-                        secondPath.cubicTo(
-                            conPoint3.x, conPoint3.y,
-                            conPoint4.x, conPoint4.y,
-                            endX, endY
+                        val graphPath = Path().apply {
+                            moveTo(startX, startY)
+                            cubicTo(
+                                conPoint1.x, conPoint1.y,
+                                conPoint2.x, conPoint2.y,
+                                midX, midY
+                            )
+                            cubicTo(
+                                conPoint3.x, conPoint3.y,
+                                conPoint4.x, conPoint4.y,
+                                endX, endY
+                            )
+                        }
+
+                        drawPath(
+                            path = filledPath,
+                            color = Color.Gray.copy(alpha = 0.20F),
+                            style = Fill
                         )
 
                         drawPath(
-                            path = firstPath,
-                            color = Color.Green,
-                            style = Stroke(4F)
+                            path = graphPath,
+                            color = color,
+                            style = Stroke(2F)
                         )
 
-                        drawPath(
-                            path = secondPath,
-                            color = Color.Red,
-                            style = Stroke(4F)
+                        drawLine(
+                            start = Offset(startX, 80.dp.toPx()),
+                            end = Offset(startX, startY),
+                            color = color
                         )
+
+                        drawLine(
+                            start = Offset(midX, 80.dp.toPx()),
+                            end = Offset(midX, midY),
+                            color = color,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 10f), 0f)
+                        )
+
+                        drawLine(
+                            start = Offset(endX, 80.dp.toPx()),
+                            end = Offset(endX, endY),
+                            color = color
+                        )
+
+                        drawContext.canvas.nativeCanvas.apply {
+                            drawText(
+                                "${currentWeatherTemperature.toInt()}",
+                                midX,
+                                midY - 10,
+                                Paint().apply {
+                                    textSize = 20F
+                                    textAlign = Paint.Align.CENTER
+                                }
+                            )
+                        }
                     }
 
                     Column(modifier = Modifier
