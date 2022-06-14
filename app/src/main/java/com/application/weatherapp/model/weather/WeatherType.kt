@@ -1,4 +1,4 @@
-package com.application.weatherapp.model
+package com.application.weatherapp.model.weather
 
 enum class WeatherType {
     WINDY,

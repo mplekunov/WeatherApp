@@ -1,12 +1,13 @@
-package com.application.weatherapp.model
+package com.application.weatherapp.model.weather
 
+import com.application.weatherapp.model.Temperature
 import java.time.LocalDateTime
 
 
 open class Weather(
     val date: LocalDateTime,
-    val feelingTemperature: Float,
-    val currentTemperature: Float,
+    val feelingTemperature: Temperature,
+    val currentTemperature: Temperature,
     val weatherType: WeatherType
     ) {
 
