@@ -36,7 +36,20 @@ class MainActivity : ComponentActivity() {
     private fun Home(
         weatherViewModel: WeatherViewModel = viewModel()
     ) {
-        Surface() {
+        val widgetModifier = Modifier.padding(
+            start = 16.dp,
+            end = 16.dp,
+            top = 10.dp,
+            bottom = 10.dp
+        )
+
+        val spacerModifier = Modifier
+            .padding(top = 16.dp)
+            .fillMaxWidth()
+            .background(Color.Gray)
+            .height(1.dp)
+
+        Surface {
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -50,62 +63,27 @@ class MainActivity : ComponentActivity() {
                     ) {}
 
                     CurrentWeatherWidget(
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        ),
+                        modifier = widgetModifier,
                         currentWeather = weatherViewModel.currentWeather.value!!
                     )
                 }
 
                 HourlyTemperatureForecastWidget(
-                    modifier = Modifier
-                        .padding(
-                            top = 340.dp,
-                            start = 16.dp,
-                            bottom = 10.dp,
-                            end = 16.dp
-                        ),
+                    modifier = widgetModifier.padding(top = 340.dp),
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
 
-                Spacer(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth()
-                        .background(Color.Gray)
-                        .height(1.dp)
-                )
+                Spacer(modifier = spacerModifier)
 
                 AdditionalWeatherInfoWidget(
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp,
-                            start = 16.dp,
-                            bottom = 10.dp,
-                            end = 16.dp
-                        ),
+                    modifier = widgetModifier,
                     currentWeather = weatherViewModel.currentWeather.value
                 )
 
-                Spacer(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth()
-                        .background(Color.Gray)
-                        .height(1.dp)
-                )
+                Spacer(modifier = spacerModifier)
 
                 HourlyPrecipitationForecastWidget(
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp,
-                            start = 16.dp,
-                            bottom = 10.dp,
-                            end = 16.dp
-                        ),
+                    modifier = widgetModifier,
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
             }
