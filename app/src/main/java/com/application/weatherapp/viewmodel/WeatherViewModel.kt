@@ -7,8 +7,10 @@ import com.application.weatherapp.model.weather.DailyWeather
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.model.weather.Weather
 import com.application.weatherapp.model.weather.WeatherType
+import com.application.weatherapp.model.weather.statistics.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import kotlin.random.Random
 
 class WeatherViewModel : ViewModel() {
     private val _currentWeather = MutableLiveData<DailyWeather>()
@@ -21,6 +23,8 @@ class WeatherViewModel : ViewModel() {
         downloadWeatherData()
     }
 
+    private val precipitationRand get() = Random.nextDouble(0.0, 5.0)
+
     private fun downloadWeatherData() {
         // For Testing
         viewModelScope.launch {
@@ -29,161 +33,280 @@ class WeatherViewModel : ViewModel() {
                     LocalDateTime.now(),
                     Temperature(0F, TemperatureUnit.CELSIUS),
                     Temperature(0F, TemperatureUnit.CELSIUS),
-                    WeatherType.CLOUDY
+                    WeatherType.CLOUDY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(0F, PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(1),
                     Temperature(24F, TemperatureUnit.CELSIUS),
                     Temperature(24F, TemperatureUnit.CELSIUS),
-                    WeatherType.SUNNY
+                    WeatherType.SUNNY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(2),
                     Temperature(26F, TemperatureUnit.CELSIUS),
                     Temperature(26F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(3),
                     Temperature(27F, TemperatureUnit.CELSIUS),
                     Temperature(27F, TemperatureUnit.CELSIUS),
-                    WeatherType.THUNDERSTORM
+                    WeatherType.THUNDERSTORM,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(4),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.PARTLY_CLOUDY_DAY
+                    WeatherType.PARTLY_CLOUDY_DAY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(5),
                     Temperature(25F, TemperatureUnit.CELSIUS),
                     Temperature(25F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(6),
                     Temperature(28F, TemperatureUnit.CELSIUS),
                     Temperature(28F, TemperatureUnit.CELSIUS),
-                    WeatherType.TORNADO
+                    WeatherType.TORNADO,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(7),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(8),
                     Temperature(30F, TemperatureUnit.CELSIUS),
                     Temperature(30F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(9),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(10),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(11),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(12),
                     Temperature(28F, TemperatureUnit.CELSIUS),
                     Temperature(28F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(13),
                     Temperature(27F, TemperatureUnit.CELSIUS),
                     Temperature(27F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(14),
                     Temperature(26F, TemperatureUnit.CELSIUS),
                     Temperature(26F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(15),
                     Temperature(26F, TemperatureUnit.CELSIUS),
                     Temperature(26F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(16),
                     Temperature(25F, TemperatureUnit.CELSIUS),
                     Temperature(25F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(17),
                     Temperature(24F, TemperatureUnit.CELSIUS),
                     Temperature(24F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(18),
                     Temperature(24F, TemperatureUnit.CELSIUS),
                     Temperature(24F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(19),
                     Temperature(24F, TemperatureUnit.CELSIUS),
                     Temperature(24F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(20),
                     Temperature(23F, TemperatureUnit.CELSIUS),
                     Temperature(23F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(21),
                     Temperature(23F, TemperatureUnit.CELSIUS),
                     Temperature(23F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(22),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(23F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 ),
                 Weather(
                     LocalDateTime.now().plusHours(23),
                     Temperature(29F, TemperatureUnit.CELSIUS),
                     Temperature(29F, TemperatureUnit.CELSIUS),
-                    WeatherType.SNOWY
+                    WeatherType.SNOWY,
+                    CloudCover(precipitationRand.toFloat(), CloudCoverUnit.PERCENTAGE),
+                    Humidity(precipitationRand.toFloat(), HumidityUnit.PERCENTAGE),
+                    Pressure(precipitationRand.toFloat(), PressureUnit.MILLI_BAR),
+                    DewPoint(Temperature(precipitationRand.toFloat(), TemperatureUnit.CELSIUS)),
+                    Precipitation(precipitationRand.toFloat(), PrecipitationUnit.MILLIMETER)
                 )))
 
 
-            val localDateTime = LocalDateTime.now()
-            _currentWeather.value = DailyWeather(localDateTime, Temperature(10F, TemperatureUnit.CELSIUS), Temperature(20F, TemperatureUnit.CELSIUS), WeatherType.RAINY, hourlyWeather)
+            _currentWeather.value = DailyWeather(hourlyWeather)
             _currentWeather.value!!.dayTemperature = Temperature(15F, TemperatureUnit.CELSIUS)
             _currentWeather.value!!.nightTemperature = Temperature(2F, TemperatureUnit.CELSIUS)
 
             _weeklyWeather.value = mutableListOf(
-                DailyWeather(localDateTime, Temperature(10F, TemperatureUnit.CELSIUS), Temperature(10F, TemperatureUnit.CELSIUS), WeatherType.SUNNY, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(1), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.THUNDERSTORM, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(2), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.PARTLY_RAINY, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(3), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.PARTLY_SNOWY_RAINY, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(4), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.SNOWY, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(5), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.CLOUDY, hourlyWeather),
-                DailyWeather(localDateTime.plusDays(6), Temperature(15F, TemperatureUnit.CELSIUS), Temperature(15F, TemperatureUnit.CELSIUS), WeatherType.PARTLY_CLOUDY_DAY, hourlyWeather)
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather),
+                DailyWeather(hourlyWeather)
             )
         }
     }

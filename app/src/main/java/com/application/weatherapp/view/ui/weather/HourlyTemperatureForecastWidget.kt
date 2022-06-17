@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.weather
+package com.application.weatherapp.view.ui.weather
 
 import android.graphics.Paint
 import android.graphics.PathMeasure
@@ -62,7 +62,7 @@ fun HourlyTemperatureForecastWidget(
                 )
 
                 Column(modifier = Modifier
-                    .padding(top = 150.dp)
+                    .padding(top = 150F.dp)
                     .onGloballyPositioned {
                         columnSize = it.size.toSize()
                     }
@@ -184,7 +184,7 @@ private fun HourlyTemperatureAsQuadraticCurve(
     ),
     borderGradientColors: List<Color>,
     midLineGradientColors: List<Color>,
-    color: Color = MaterialTheme.colorScheme.onPrimary
+    fontColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Canvas(modifier = modifier) {
         val filledPath = Path().apply {
@@ -278,7 +278,7 @@ private fun HourlyTemperatureAsQuadraticCurve(
                 Paint().apply {
                     textSize = 34F
                     textAlign = Paint.Align.CENTER
-                    this.color = color.toArgb()
+                    this.color = fontColor.toArgb()
                 }
             )
         }

@@ -1,6 +1,8 @@
 package com.application.weatherapp.model.weather
 
 import com.application.weatherapp.model.Temperature
+import com.application.weatherapp.model.TemperatureUnit
+import com.application.weatherapp.model.weather.statistics.*
 import java.time.LocalDateTime
 
 
@@ -8,9 +10,13 @@ open class Weather(
     val date: LocalDateTime,
     val feelingTemperature: Temperature,
     val currentTemperature: Temperature,
-    val weatherType: WeatherType
+    val weatherType: WeatherType,
+    var cloudCover: CloudCover,
+    var humidity: Humidity,
+    var pressure: Pressure,
+    var dewPoint: DewPoint,
+    var precipitation: Precipitation
     ) {
-
     val weatherDescription get() = when(weatherType) {
         WeatherType.WINDY -> "Windy"
         WeatherType.RAINY -> "Rainy"
@@ -32,6 +38,4 @@ open class Weather(
         WeatherType.HURRICANE -> "Hurricane"
         WeatherType.TORNADO -> "Tornado"
     }
-
-
 }

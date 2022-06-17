@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.application.weatherapp.ui.theme.WeatherAppTheme
-import com.application.weatherapp.view.weather.*
+import com.application.weatherapp.view.ui.weather.*
 import com.application.weatherapp.viewmodel.WeatherViewModel
 
 class MainActivity : ComponentActivity() {
@@ -36,12 +36,14 @@ class MainActivity : ComponentActivity() {
     private fun Home(
         weatherViewModel: WeatherViewModel = viewModel()
     ) {
-        val widgetModifier = Modifier.padding(
-            start = 16.dp,
-            end = 16.dp,
-            top = 10.dp,
-            bottom = 10.dp
-        )
+        val widgetModifier = Modifier
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 10.dp,
+                bottom = 10.dp
+            )
+            .fillMaxWidth()
 
         val spacerModifier = Modifier
             .padding(top = 16.dp)
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
                     CurrentWeatherWidget(
                         modifier = widgetModifier,
-                        currentWeather = weatherViewModel.currentWeather.value!!
+                        dailyWeather = weatherViewModel.currentWeather.value!!
                     )
                 }
 
@@ -75,9 +77,9 @@ class MainActivity : ComponentActivity() {
 
                 Spacer(modifier = spacerModifier)
 
-                AdditionalWeatherInfoWidget(
+                CurrentWeatherExtendedInfoWidget(
                     modifier = widgetModifier,
-                    currentWeather = weatherViewModel.currentWeather.value
+                    dailyWeather = weatherViewModel.currentWeather.value
                 )
 
                 Spacer(modifier = spacerModifier)
@@ -86,6 +88,8 @@ class MainActivity : ComponentActivity() {
                     modifier = widgetModifier,
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
+
+                Spacer(modifier = spacerModifier)
             }
         }
     }

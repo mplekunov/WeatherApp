@@ -1,7 +1,8 @@
-package com.application.weatherapp.view.weather
+package com.application.weatherapp.view.ui.weather
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,9 +13,9 @@ import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.weather.DailyWeather
 
 @Composable
-fun AdditionalWeatherInfoWidget(
+fun CurrentWeatherExtendedInfoWidget(
     modifier: Modifier,
-    currentWeather: DailyWeather?
+    dailyWeather: DailyWeather?
 ) {
     Column(modifier = modifier) {
         Text(
@@ -31,7 +32,7 @@ fun AdditionalWeatherInfoWidget(
             )
 
             Text(
-                text = "${currentWeather?.cloudCover?.value} %",
+                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value} %",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 40.dp)
             )
@@ -44,7 +45,7 @@ fun AdditionalWeatherInfoWidget(
             )
 
             Text(
-                text = "${currentWeather?.humidity?.value} %",
+                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value} %",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 57.dp)
             )
@@ -57,7 +58,7 @@ fun AdditionalWeatherInfoWidget(
             )
 
             Text(
-                text = "${currentWeather?.pressure?.value} mBar",
+                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value} mBar",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 63.dp)
             )
@@ -70,7 +71,7 @@ fun AdditionalWeatherInfoWidget(
             )
 
             Text(
-                text = "${currentWeather?.dewPoint?.temperature?.value} C",
+                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value} C",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 51.dp)
             )

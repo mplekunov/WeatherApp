@@ -6,18 +6,26 @@ import com.application.weatherapp.model.weather.statistics.*
 import java.time.LocalDateTime
 
 class DailyWeather(
-    date: LocalDateTime,
-    feelingTemperature: Temperature,
-    currentTemperature: Temperature,
-    weatherType: WeatherType,
     val hourlyWeather: HourlyWeather
-) : Weather(date, feelingTemperature, currentTemperature, weatherType) {
+) {
+    val averageTemperature get() =
+        (hourlyWeather.maxTemperature.value + hourlyWeather.minTemperature.value) / 2
+
+    val averageHumidity get() =
+        (hourlyWeather.maxHumidity.value + hourlyWeather.minHumidity.value) / 2
+
+    val averagePressure get() =
+        (hourlyWeather.maxPressure.value + hourlyWeather.minPressure.value) / 2
+
+    val averageDewPoint get() =
+        (hourlyWeather.maxDewPoint.temperature.value + hourlyWeather.minDewPoint.temperature.value) / 2
+
+    val averageCloudCover get() =
+        (hourlyWeather.maxCloudCover.value + hourlyWeather.minCloudCover.value) / 2
+
+    val averagePrecipitation get() =
+        (hourlyWeather.maxPrecipitation.value + hourlyWeather.minPrecipitation.value) / 2
 
     var dayTemperature: Temperature = Temperature(0F, TemperatureUnit.CELSIUS)
     var nightTemperature: Temperature = Temperature(0F, TemperatureUnit.CELSIUS)
-
-    var cloudCover: CloudCover = CloudCover(0F, CloudCoverUnit.PERCENTAGE)
-    var humidity: Humidity = Humidity(0F, HumidityUnit.PERCENTAGE)
-    var pressure: Pressure = Pressure(0F, PressureUnit.MILLI_BAR)
-    var dewPoint: DewPoint = DewPoint(Temperature(0F, TemperatureUnit.CELSIUS))
 }
