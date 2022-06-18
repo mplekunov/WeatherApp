@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
@@ -30,7 +31,6 @@ fun HourlyPrecipitationForecastWidget(
     hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
-    val levelFontSize = 12.sp
     val canvasSize = Size(40F, 100F)
 
     Column(modifier = modifier) {
@@ -42,38 +42,9 @@ fun HourlyPrecipitationForecastWidget(
         )
 
         LazyRow(
-            modifier = Modifier.heightIn(max = 120.dp)
+            modifier = Modifier.heightIn(max = 150.dp)
         ) {
             itemsIndexed(hourlyWeather.weatherForecast) { index, weather ->
-                if (index == 0) {
-                    Column(modifier = Modifier.padding(end = 16.dp)) {
-                        Text(
-                            text = "Heavy",
-                            fontSize = levelFontSize,
-                            color = fontColor,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "Strong",
-                            fontSize = levelFontSize,
-                            color = fontColor,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "Medium",
-                            fontSize = levelFontSize,
-                            color = fontColor,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "Light",
-                            fontSize = levelFontSize,
-                            color = fontColor,
-                            modifier = Modifier.weight(2f)
-                        )
-                    }
-                }
-
                 val currentValue = weather.precipitation.value
 
                 var nextValue =
@@ -96,16 +67,25 @@ fun HourlyPrecipitationForecastWidget(
                     canvasSize = canvasSize
                 )
 
+                if (index == 0) {
+                    DrawPrecipitationLevelLabel(
+                        canvasSize = canvasSize,
+                        text = listOf("Heavy", "Strong", "Medium", "Light"),
+                        fontSize = 34F,
+                        fontColor = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(end = 50.dp)
+                    )
+                }
+
                 Column(modifier = Modifier) {
                     Box {
                         DrawPrecipitationLevelLine(
-                            modifier = Modifier.padding(top = levelFontSize.value.dp),
+                            modifier = Modifier,
                             canvasSize = canvasSize,
-                            color = fontColor,
+                            lineColor = fontColor,
                             numOfLines = 4,
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
-
 
                         DrawQuadraticCurve(
                             tripleValuePoint = tripleValuePoint,
@@ -136,7 +116,7 @@ fun HourlyPrecipitationForecastWidget(
 @Composable
 fun DrawPrecipitationLevelLine(
     canvasSize: Size,
-    color: Color,
+    lineColor: Color,
     numOfLines: Int,
     modifier: Modifier = Modifier,
     pathEffect: PathEffect? = null
@@ -146,9 +126,9 @@ fun DrawPrecipitationLevelLine(
     Canvas(modifier = modifier) {
         for (i in 0 until numOfLines) {
             drawLine(
-                start = Offset(0F, (lineHeight * i).dp.toPx()),
+                start = Offset(0F.dp.toPx(), (lineHeight * i).dp.toPx()),
                 end = Offset(canvasSize.width.dp.toPx(), (lineHeight * i).dp.toPx()),
-                color = color,
+                color = lineColor,
                 pathEffect = pathEffect
             )
         }
@@ -156,111 +136,29 @@ fun DrawPrecipitationLevelLine(
 }
 
 @Composable
-fun HourlyPrecipitationGraph(
-    prevValue: Float,
-    currentValue: Float,
-    nextValue: Float,
-    maxValue: Float,
-    minValue: Float,
-    canvasSize: Size
-) {
-    val startX = 0F
-    val endX = startX + canvasSize.width
-    val midX = (endX + startX) / 2
-
-    val startPoint = ValuePoint(
-        x = 0F,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            (prevValue + currentValue) / 2,
-            canvasSize.height
-        ),
-        value = (prevValue + currentValue) / 2
-    )
-
-    val controlPoint = ValuePoint(
-        x = midX,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            currentValue,
-            canvasSize.height
-        ),
-        value = currentValue
-    )
-
-    val endPoint = ValuePoint(
-        x = endX,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            (nextValue + currentValue) / 2,
-            canvasSize.height
-        ),
-        value = (nextValue + currentValue) / 2
-    )
-
-    val graphColor = MaterialTheme.colorScheme.onPrimary
-
-    HourlyPrecipitationAsQuadraticCurve(
-        startPoint = startPoint,
-        controlPoint = controlPoint,
-        endPoint = endPoint,
-        modifier = Modifier,
-        canvasSize = canvasSize,
-        graphColor = graphColor
-    )
-}
-
-@Composable
-private fun HourlyPrecipitationAsQuadraticCurve(
-    startPoint: ValuePoint,
-    controlPoint: ValuePoint,
-    endPoint: ValuePoint,
-    modifier: Modifier,
+fun DrawPrecipitationLevelLabel(
+    modifier: Modifier = Modifier,
     canvasSize: Size,
-    graphColor: Color = Color.White,
-    fontColor: Color = MaterialTheme.colorScheme.onPrimary
+    text: List<String>,
+    fontColor: Color,
+    fontSize: Float
 ) {
-    Canvas(
-        modifier = modifier
-            .width(canvasSize.width.dp)
-            .height(canvasSize.height.dp)
-    ) {
-        val graphPath = Path().apply {
-            moveTo(startPoint.x.dp.toPx(), startPoint.y.dp.toPx())
+    val lineHeight = canvasSize.height / text.size
 
-            quadraticBezierTo(
-                controlPoint.x.dp.toPx(), controlPoint.y.dp.toPx(),
-                endPoint.x.dp.toPx(), endPoint.y.dp.toPx()
-            )
-        }
-
-        val pathMeasure = PathMeasure(graphPath.asAndroidPath(), false)
-        val pos = FloatArray(2)
-
-        pathMeasure.getPosTan(pathMeasure.length / 2, pos, null)
-
-        val midY = pos[1]
-
-        drawPath(
-            path = graphPath,
-            color = graphColor,
-            style = Stroke(4F)
-        )
-
-        drawContext.canvas.nativeCanvas.apply {
-            drawText(
-                String.format("%.1f", controlPoint.value),
-                controlPoint.x.dp.toPx(),
-                midY - 40,
-                Paint().apply {
-                    textSize = 34F
-                    textAlign = Paint.Align.CENTER
-                    this.color = fontColor.toArgb()
-                }
-            )
+    Canvas(modifier = modifier) {
+        for (i in text.indices) {
+            drawContext.canvas.nativeCanvas.apply {
+                drawText(
+                    text[i],
+                    0F.dp.toPx(),
+                    (lineHeight * i).dp.toPx(),
+                    Paint().apply {
+                        textSize = fontSize
+                        textAlign = Paint.Align.LEFT
+                        this.color = fontColor.toArgb()
+                    }
+                )
+            }
         }
     }
 }
