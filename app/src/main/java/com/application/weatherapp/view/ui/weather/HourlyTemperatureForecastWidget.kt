@@ -52,7 +52,7 @@ fun HourlyTemperatureForecastWidget(
                 else hourlyWeather.weatherForecast[index - 1].currentTemperature.value
 
             Column(modifier = Modifier) {
-                HourlyTemperatureCurve(
+                HourlyTemperatureGraph(
                     prevValue = prevValue,
                     currentValue = currentValue,
                     nextValue = nextValue,
@@ -89,7 +89,7 @@ fun HourlyTemperatureForecastWidget(
 
 
 @Composable
-private fun HourlyTemperatureCurve(
+private fun HourlyTemperatureGraph(
     prevValue: Float,
     currentValue: Float,
     nextValue: Float,

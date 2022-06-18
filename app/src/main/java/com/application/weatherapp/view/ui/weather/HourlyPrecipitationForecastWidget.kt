@@ -9,7 +9,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -35,30 +37,38 @@ fun HourlyPrecipitationForecastWidget(
             text = "Precipitation",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(bottom = 40.dp)
         )
 
         LazyRow(
-            modifier = Modifier.heightIn(min = 120.dp)
+            modifier = Modifier.heightIn(max = 120.dp)
         ) {
             itemsIndexed(hourlyWeather.weatherForecast) { index, weather ->
                 if (index == 0) {
-                    Column {
+                    Column(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
                             text = "Heavy",
                             fontSize = 12.sp,
+                            color = fontColor,
+                            modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Strong",
                             fontSize = 12.sp,
+                            color = fontColor,
+                            modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Medium",
                             fontSize = 12.sp,
+                            color = fontColor,
+                            modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Light",
                             fontSize = 12.sp,
+                            color = fontColor,
+                            modifier = Modifier.weight(2f)
                         )
                     }
                 }
@@ -76,41 +86,68 @@ fun HourlyPrecipitationForecastWidget(
                     if (index == 0) hourlyWeather.weatherForecast.last().precipitation.value
                     else hourlyWeather.weatherForecast[index - 1].precipitation.value
 
-                val canvasSize = Size(32F, 100F)
+                val canvasSize = Size(40F, 100F)
 
-                HourlyPrecipitationCurve(
-                    prevValue = prevValue,
-                    currentValue = currentValue,
-                    nextValue = nextValue,
-                    maxValue = hourlyWeather.maxPrecipitation.value,
-                    minValue = hourlyWeather.minPrecipitation.value,
-                    canvasSize = canvasSize
-                )
-//                Column(modifier = Modifier.height(80.dp)) {
-//
 
-//                    Column(modifier = Modifier
-//                        .padding(top = 0.dp)
-//                        .onGloballyPositioned {
-//                            columnSize = it.size.toSize()
-//                        }
-//                    ) {
-//                        Text(
-//                            text = "${weather.date.hour}",
-//                            fontSize = 12.sp,
-//                            modifier = Modifier
-//                                .align(Alignment.CenterHorizontally)
-//                                .size(48.dp)
-//                        )
-//                    }
-//                }
+
+                Column(modifier = Modifier.fillMaxHeight()) {
+
+                    Box {
+                        DrawPrecipitationLevelLine(
+                            modifier = Modifier.padding(top = 8.dp),
+                            canvasSize = canvasSize,
+                            color = fontColor,
+                            numOfLines = 4,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
+                        )
+
+                        HourlyPrecipitationGraph(
+                            prevValue = prevValue,
+                            currentValue = currentValue,
+                            nextValue = nextValue,
+                            maxValue = 5F,
+                            minValue = hourlyWeather.minPrecipitation.value,
+                            canvasSize = canvasSize
+                        )
+                    }
+
+                    Text(
+                        text = "${weather.date.hour}",
+                        fontSize = 12.sp,
+                        color = fontColor,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun HourlyPrecipitationCurve(
+fun DrawPrecipitationLevelLine(
+    canvasSize: Size,
+    color: Color,
+    numOfLines: Int,
+    modifier: Modifier = Modifier,
+    pathEffect: PathEffect? = null
+) {
+    val lineHeight = canvasSize.height / numOfLines
+
+    Canvas(modifier = modifier) {
+        for (i in 0 until numOfLines) {
+            drawLine(
+                start = Offset(0F, (lineHeight * i).dp.toPx()),
+                end = Offset(canvasSize.width.dp.toPx(), (lineHeight * i).dp.toPx()),
+                color = color,
+                pathEffect = pathEffect
+            )
+        }
+    }
+}
+
+@Composable
+fun HourlyPrecipitationGraph(
     prevValue: Float,
     currentValue: Float,
     nextValue: Float,
