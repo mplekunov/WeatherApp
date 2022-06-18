@@ -19,8 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.application.weatherapp.model.graph.ValuePoint
-import com.application.weatherapp.model.graph.calculateYCoordinate
+import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 
@@ -88,6 +87,14 @@ fun HourlyPrecipitationForecastWidget(
                     if (index == 0) hourlyWeather.weatherForecast.last().precipitation.value
                     else hourlyWeather.weatherForecast[index - 1].precipitation.value
 
+                val tripleValuePoint = getTripleValuePoint(
+                    startValue =  prevValue,
+                    midValue = currentValue,
+                    endValue =  nextValue,
+                    maxValue = hourlyWeather.maxPrecipitation.value,
+                    minValue = hourlyWeather.minPrecipitation.value,
+                    canvasSize = canvasSize
+                )
 
                 Column(modifier = Modifier) {
                     Box {
@@ -99,13 +106,17 @@ fun HourlyPrecipitationForecastWidget(
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
 
-                        HourlyPrecipitationGraph(
-                            prevValue = prevValue,
-                            currentValue = currentValue,
-                            nextValue = nextValue,
-                            maxValue = 5F,
-                            minValue = hourlyWeather.minPrecipitation.value,
-                            canvasSize = canvasSize
+
+                        DrawQuadraticCurve(
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = canvasSize,
+                            graphColor = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        DrawTextInMidOfCurve(
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = canvasSize,
+                            fontColor = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 

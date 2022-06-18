@@ -329,7 +329,7 @@ fun DrawTextInMidOfCurve(
     ) {
         drawContext.canvas.nativeCanvas.apply {
             drawText(
-                "${controlPoint.value.toInt()}",
+                String.format("%.1f", controlPoint.value),
                 controlPointX,
                 midY - 50,
                 android.graphics.Paint().apply {

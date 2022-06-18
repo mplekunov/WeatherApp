@@ -17,6 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import com.application.weatherapp.model.graph.DrawQuadraticCurve
+import com.application.weatherapp.model.graph.DrawTextInMidOfCurve
+import com.application.weatherapp.model.graph.getTripleValuePoint
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 
@@ -73,7 +76,7 @@ fun HourlyWindForecastWidget(
         }
 
         LazyRow(
-            modifier = Modifier.heightIn(max = 120.dp)
+            modifier = Modifier.heightIn(max = 150.dp)
         ) {
             itemsIndexed(hourlyWeather.weatherForecast) { index, weather ->
                 val currentValue = weather.wind.speed.value
@@ -89,16 +92,29 @@ fun HourlyWindForecastWidget(
                     if (index == 0) hourlyWeather.weatherForecast.last().wind.speed.value
                     else hourlyWeather.weatherForecast[index - 1].wind.speed.value
 
+                val tripleValuePoint = getTripleValuePoint(
+                    startValue =  prevValue,
+                    midValue = currentValue,
+                    endValue =  nextValue,
+                    maxValue = hourlyWeather.maxWindSpeed.speed.value,
+                    minValue = hourlyWeather.maxWindSpeed.speed.value,
+                    canvasSize = canvasSize
+                )
 
-                Column(modifier = Modifier.fillMaxHeight()) {
-                    HourlyPrecipitationGraph(
-                        prevValue = prevValue,
-                        currentValue = currentValue,
-                        nextValue = nextValue,
-                        maxValue = 20F,
-                        minValue = hourlyWeather.minWindSpeed.speed.value,
-                        canvasSize = canvasSize
-                    )
+                Column(modifier = Modifier) {
+                    Box {
+                        DrawQuadraticCurve(
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = canvasSize,
+                            graphColor = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        DrawTextInMidOfCurve(
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = canvasSize,
+                            fontColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
 
                     Text(
                         text = "${weather.date.hour}",
