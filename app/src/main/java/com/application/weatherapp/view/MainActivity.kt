@@ -90,6 +90,11 @@ class MainActivity : ComponentActivity() {
                 )
 
                 Spacer(modifier = spacerModifier)
+
+                HourlyWindForecastWidget(
+                    modifier = widgetModifier,
+                    hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
+                )
             }
         }
     }

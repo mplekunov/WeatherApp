@@ -14,6 +14,7 @@ data class HourlyWeather(
     private val pressureCollection get() = weatherForecast.stream().map { it.pressure.value }.toList()
     private val dewPointCollection get() = weatherForecast.stream().map { it.dewPoint.temperature.value }.toList()
     private val precipitationCollection get() = weatherForecast.stream().map { it.precipitation.value }.toList()
+    private val windCollection get() = weatherForecast.stream().map { it.wind.speed.value }.toList()
 
     val maxTemperature get() =
         Temperature(temperatureCollection.maxOrNull() ?: 0F, weatherForecast.first().currentTemperature.unit)
@@ -50,4 +51,10 @@ data class HourlyWeather(
 
     val minPrecipitation get() =
         Precipitation(precipitationCollection.minOrNull() ?: 0F, weatherForecast.first().precipitation.unit)
+
+    val maxWindSpeed get() =
+        Wind(Speed(windCollection.maxOrNull() ?: 0F, weatherForecast.first().wind.speed.unit), Direction(Direction.Directions.NONE))
+
+    val minWindSpeed get() =
+        Wind(Speed(windCollection.minOrNull() ?: 0F, weatherForecast.first().wind.speed.unit), Direction(Direction.Directions.NONE))
 }

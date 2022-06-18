@@ -31,13 +31,15 @@ fun HourlyPrecipitationForecastWidget(
     hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
+    val levelFontSize = 12.sp
+    val canvasSize = Size(40F, 100F)
 
     Column(modifier = modifier) {
         Text(
             text = "Precipitation",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 40.dp)
+            modifier = Modifier.padding(bottom = 20.dp)
         )
 
         LazyRow(
@@ -48,25 +50,25 @@ fun HourlyPrecipitationForecastWidget(
                     Column(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
                             text = "Heavy",
-                            fontSize = 12.sp,
+                            fontSize = levelFontSize,
                             color = fontColor,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Strong",
-                            fontSize = 12.sp,
+                            fontSize = levelFontSize,
                             color = fontColor,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Medium",
-                            fontSize = 12.sp,
+                            fontSize = levelFontSize,
                             color = fontColor,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Light",
-                            fontSize = 12.sp,
+                            fontSize = levelFontSize,
                             color = fontColor,
                             modifier = Modifier.weight(2f)
                         )
@@ -86,15 +88,11 @@ fun HourlyPrecipitationForecastWidget(
                     if (index == 0) hourlyWeather.weatherForecast.last().precipitation.value
                     else hourlyWeather.weatherForecast[index - 1].precipitation.value
 
-                val canvasSize = Size(40F, 100F)
 
-
-
-                Column(modifier = Modifier.fillMaxHeight()) {
-
+                Column(modifier = Modifier) {
                     Box {
                         DrawPrecipitationLevelLine(
-                            modifier = Modifier.padding(top = 8.dp),
+                            modifier = Modifier.padding(top = levelFontSize.value.dp),
                             canvasSize = canvasSize,
                             color = fontColor,
                             numOfLines = 4,
@@ -245,7 +243,7 @@ private fun HourlyPrecipitationAsQuadraticCurve(
             drawText(
                 String.format("%.1f", controlPoint.value),
                 controlPoint.x.dp.toPx(),
-                midY - 50,
+                midY - 40,
                 Paint().apply {
                     textSize = 34F
                     textAlign = Paint.Align.CENTER

@@ -3,9 +3,7 @@ package com.application.weatherapp.view.ui.weather
 import android.graphics.Paint
 import android.graphics.PathMeasure
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
@@ -17,25 +15,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
-import com.application.weatherapp.model.graph.ValuePoint
-import com.application.weatherapp.model.graph.calculateYCoordinate
+import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
+import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 
+@Preview
 @Composable
 fun HourlyTemperatureForecastWidget(
     modifier: Modifier = Modifier,
-    hourlyWeather: HourlyWeather
+    hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
 ) {
-    var columnSize by remember { mutableStateOf(Size.Zero) }
+    val canvasSize = Size(40F, 190F)
 
     LazyRow(
-        modifier = modifier
+        modifier = modifier.heightIn(max = 250.dp)
     ) {
         itemsIndexed(hourlyWeather.weatherForecast) { index, weather ->
             val currentValue = weather.currentTemperature.value
@@ -51,236 +47,77 @@ fun HourlyTemperatureForecastWidget(
                 if (index == 0) hourlyWeather.weatherForecast.last().currentTemperature.value
                 else hourlyWeather.weatherForecast[index - 1].currentTemperature.value
 
-            Column(modifier = Modifier) {
-                HourlyTemperatureGraph(
-                    prevValue = prevValue,
-                    currentValue = currentValue,
-                    nextValue = nextValue,
-                    maxValue = hourlyWeather.maxTemperature.value,
-                    minValue = hourlyWeather.minTemperature.value,
-                    canvasSize = Size(columnSize.width, 150F),
+            val tripleValuePoint = getTripleValuePoint(
+                startValue =  prevValue,
+                midValue = currentValue,
+                endValue =  nextValue,
+                maxValue = hourlyWeather.maxTemperature.value,
+                minValue = hourlyWeather.minTemperature.value,
+                canvasSize = canvasSize
+            )
+
+            val brush =
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.onPrimary,
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.4f),
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0f),
+                    )
                 )
 
-                Column(modifier = Modifier
-                    .padding(top = 150F.dp)
-                    .onGloballyPositioned {
-                        columnSize = it.size.toSize()
-                    }
-                ) {
-                    Icon(
-                        painter = getWeatherIconPainter(weatherType = weather.weatherType),
-                        contentDescription = weather.weatherDescription,
-                        modifier = Modifier
-                            .size(48.dp)
+            Column(modifier = Modifier) {
+                Box {
+                    DrawQuadraticCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = canvasSize,
+                        graphColor = MaterialTheme.colorScheme.onPrimary
                     )
 
-                    Text(
-                        text = "${weather.date.hour}",
-                        fontSize = 12.sp,
-                        modifier = Modifier
+                    DrawAreaUnderQuadraticCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = canvasSize,
+                        fillColor = Color.Transparent
+                    )
+
+                    DrawCurveSideBorders(
+                        tupleValuePoint = tripleValuePoint,
+                        canvasSize = canvasSize,
+                        borderBrush = brush
+                    )
+
+                    DrawLineInMiddleOfCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = canvasSize,
+                        midLineBrush = brush,
+                        midLinePathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 10f), 20f)
+                    )
+
+                    DrawTextInMidOfCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = canvasSize,
+                        fontColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+                Icon(
+                    painter = getWeatherIconPainter(weatherType = weather.weatherType),
+                    contentDescription = weather.weatherDescription,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .size(canvasSize.width.dp)
+                )
+
+                Text(
+                    text = "${weather.date.hour}",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                    )
-                }
+                )
             }
-        }
-    }
-}
-
-
-
-@Composable
-private fun HourlyTemperatureGraph(
-    prevValue: Float,
-    currentValue: Float,
-    nextValue: Float,
-    maxValue: Float,
-    minValue: Float,
-    canvasSize: Size,
-    modifier: Modifier = Modifier
-) {
-    val startX = 0F
-    val endX = startX + canvasSize.width
-    val midX = (endX + startX) / 2
-
-    val startPoint = ValuePoint(
-        x = 0F,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            (prevValue + currentValue) / 2,
-            canvasSize.height
-        ),
-        value = (prevValue + currentValue) / 2
-    )
-
-    val controlPoint = ValuePoint(
-        x = midX,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            currentValue,
-            canvasSize.height
-        ),
-        value = currentValue
-    )
-
-    val endPoint = ValuePoint(
-        x = endX,
-        y = calculateYCoordinate(
-            maxValue,
-            minValue,
-            (nextValue + currentValue) / 2,
-            canvasSize.height
-        ),
-        value = (nextValue + currentValue) / 2
-    )
-
-    val graphGradientColors = listOf(
-        MaterialTheme.colorScheme.onPrimary,
-        MaterialTheme.colorScheme.onPrimary
-    )
-
-    val areaUnderCurveGradientColors = listOf(
-        Color.Transparent,
-        Color.Transparent
-    )
-
-    val borderGradientColors = listOf(
-        MaterialTheme.colorScheme.onPrimary,
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.4f),
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
-        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0f),
-    )
-
-    HourlyTemperatureAsQuadraticCurve(
-        startPoint = startPoint,
-        controlPoint = controlPoint,
-        endPoint = endPoint,
-        canvasSize = canvasSize,
-        modifier = modifier,
-        graphGradientColors = graphGradientColors,
-        areaUnderCurveGradientColors = areaUnderCurveGradientColors,
-        borderGradientColors = borderGradientColors,
-        midLineGradientColors = borderGradientColors
-    )
-}
-
-@Composable
-private fun HourlyTemperatureAsQuadraticCurve(
-    startPoint: ValuePoint,
-    controlPoint: ValuePoint,
-    endPoint: ValuePoint,
-    canvasSize: Size,
-    modifier: Modifier = Modifier,
-    graphGradientColors: List<Color> = listOf(
-        MaterialTheme.colorScheme.onPrimary,
-        MaterialTheme.colorScheme.onPrimary
-    ),
-    areaUnderCurveGradientColors: List<Color> = listOf(
-        Color.Transparent,
-        Color.Transparent
-    ),
-    borderGradientColors: List<Color>,
-    midLineGradientColors: List<Color>,
-    fontColor: Color = MaterialTheme.colorScheme.onPrimary
-) {
-    Canvas(modifier = modifier) {
-        val filledPath = Path().apply {
-            moveTo(startPoint.x, canvasSize.height.dp.toPx())
-
-            lineTo(startPoint.x, startPoint.y)
-
-            quadraticBezierTo(
-                controlPoint.x, controlPoint.y,
-                endPoint.x, endPoint.y
-            )
-
-            lineTo(endPoint.x, canvasSize.height.dp.toPx())
-
-            close()
-        }
-
-        val graphPath = Path().apply {
-            moveTo(startPoint.x, startPoint.y)
-
-            quadraticBezierTo(
-                controlPoint.x, controlPoint.y,
-                endPoint.x, endPoint.y
-            )
-        }
-
-        val pathMeasure = PathMeasure(graphPath.asAndroidPath(), false)
-        val pos = FloatArray(2)
-
-        pathMeasure.getPosTan(pathMeasure.length / 2, pos, null)
-
-        val midY = pos[1]
-
-        drawPath(
-            path = graphPath,
-            brush = Brush.verticalGradient(
-                colors = graphGradientColors,
-                startY = startPoint.y,
-                endY = canvasSize.height.dp.toPx()
-            ),
-            style = Stroke(4F)
-        )
-
-        drawLine(
-            start = Offset(startPoint.x, startPoint.y),
-            end = Offset(startPoint.x, canvasSize.height.dp.toPx()),
-            brush = Brush.verticalGradient(
-                colors = borderGradientColors,
-                startY = startPoint.y,
-                endY = canvasSize.height.dp.toPx()
-            )
-        )
-
-        drawLine(
-            start = Offset(controlPoint.x, midY),
-            end = Offset(controlPoint.x, canvasSize.height.dp.toPx()),
-            brush = Brush.verticalGradient(
-                colors = midLineGradientColors,
-                startY = midY,
-                endY = canvasSize.height.dp.toPx()
-            ),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 10f), 20f)
-        )
-
-        drawLine(
-            start = Offset(endPoint.x, endPoint.y),
-            end = Offset(endPoint.x, canvasSize.height.dp.toPx()),
-            brush = Brush.verticalGradient(
-                colors = borderGradientColors,
-                startY = endPoint.y,
-                endY = canvasSize.height.dp.toPx()
-            )
-        )
-
-        drawPath(
-            path = filledPath,
-            brush = Brush.verticalGradient(
-                colors = areaUnderCurveGradientColors,
-                startY = startPoint.y,
-                endY = canvasSize.height.dp.toPx()
-            ),
-            style = Fill
-        )
-
-
-        drawContext.canvas.nativeCanvas.apply {
-            drawText(
-                "${controlPoint.value.toInt()}",
-                controlPoint.x,
-                midY - 50,
-                Paint().apply {
-                    textSize = 34F
-                    textAlign = Paint.Align.CENTER
-                    this.color = fontColor.toArgb()
-                }
-            )
         }
     }
 }
