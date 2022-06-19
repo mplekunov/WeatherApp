@@ -1,7 +1,6 @@
 package com.application.weatherapp.view.ui.weather
 
 import android.graphics.Paint
-import android.graphics.PathMeasure
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,10 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
@@ -26,12 +23,20 @@ import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 
 @Preview
 @Composable
+private fun PreviewHourlyPrecipitationForecastWidget() {
+    HourlyPrecipitationForecastWidget(
+        graphSize = Size(40F, 100F),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
 fun HourlyPrecipitationForecastWidget(
     modifier: Modifier = Modifier,
+    graphSize: Size,
     hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
-    val canvasSize = Size(40F, 100F)
 
     Column(modifier = modifier) {
         Text(
@@ -42,7 +47,7 @@ fun HourlyPrecipitationForecastWidget(
         )
 
         LazyRow(
-            modifier = Modifier.heightIn(max = 150.dp)
+            modifier = Modifier
         ) {
             itemsIndexed(hourlyWeather.weatherForecast) { index, weather ->
                 val currentValue = weather.precipitation.value
@@ -58,44 +63,62 @@ fun HourlyPrecipitationForecastWidget(
                     if (index == 0) hourlyWeather.weatherForecast.last().precipitation.value
                     else hourlyWeather.weatherForecast[index - 1].precipitation.value
 
-                val tripleValuePoint = getTripleValuePoint(
-                    startValue =  prevValue,
+                val tripleValuePoint = convertToQuadraticConnectionPoints(
+                    startValue = prevValue,
                     midValue = currentValue,
-                    endValue =  nextValue,
+                    endValue = nextValue,
                     maxValue = hourlyWeather.maxPrecipitation.value,
                     minValue = hourlyWeather.minPrecipitation.value,
-                    canvasSize = canvasSize
+                    canvasSize = graphSize
                 )
 
                 if (index == 0) {
-                    DrawPrecipitationLevelLabel(
-                        canvasSize = canvasSize,
-                        text = listOf("Heavy", "Strong", "Medium", "Light"),
-                        fontSize = 34F,
-                        fontColor = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(end = 50.dp)
-                    )
+                    Box(modifier = Modifier.padding(end = 50.dp, top = 4.dp)) {
+                        DrawPrecipitationLevelLabel(
+                            canvasSize = graphSize,
+                            text = listOf("Heavy", "Strong", "Medium", "Light"),
+                            fontSize = 34F,
+                            fontColor = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        Canvas(modifier = Modifier.padding(top = 4.dp)) {
+                            drawContext.canvas.nativeCanvas.apply {
+                                drawText(
+                                    "In mm",
+                                    0F.dp.toPx(),
+                                    graphSize.height.dp.toPx(),
+                                    Paint().apply {
+                                        textSize = 28F
+                                        textAlign = Paint.Align.LEFT
+                                        this.color = fontColor.toArgb()
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
 
                 Column(modifier = Modifier) {
                     Box {
                         DrawPrecipitationLevelLine(
                             modifier = Modifier,
-                            canvasSize = canvasSize,
+                            canvasSize = graphSize,
                             lineColor = fontColor,
                             numOfLines = 4,
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
 
-                        DrawQuadraticCurve(
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = canvasSize,
-                            graphColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                        Box(modifier = Modifier.padding(top = 20.dp)) {
+                            DrawQuadraticCurve(
+                                tripleValuePoint = tripleValuePoint,
+                                canvasSize = graphSize,
+                                graphColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
 
                         DrawTextInMidOfCurve(
                             tripleValuePoint = tripleValuePoint,
-                            canvasSize = canvasSize,
+                            canvasSize = graphSize,
                             fontColor = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -114,7 +137,7 @@ fun HourlyPrecipitationForecastWidget(
 }
 
 @Composable
-fun DrawPrecipitationLevelLine(
+private fun DrawPrecipitationLevelLine(
     canvasSize: Size,
     lineColor: Color,
     numOfLines: Int,
@@ -136,7 +159,7 @@ fun DrawPrecipitationLevelLine(
 }
 
 @Composable
-fun DrawPrecipitationLevelLabel(
+private fun DrawPrecipitationLevelLabel(
     modifier: Modifier = Modifier,
     canvasSize: Size,
     text: List<String>,

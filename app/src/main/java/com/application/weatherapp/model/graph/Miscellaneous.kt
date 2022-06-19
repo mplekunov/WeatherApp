@@ -1,7 +1,7 @@
 package com.application.weatherapp.model.graph
 
 import androidx.compose.ui.geometry.Size
-import kotlin.math.max
+import kotlin.math.min
 
 fun calculateYCoordinate(
     maxValue: Float,
@@ -9,11 +9,8 @@ fun calculateYCoordinate(
     currentValue: Float,
     canvasHeight: Float
 ): Float {
-    val realValue = (maxValue - currentValue)
-
-    val distanceOnCanvasPerValue = (canvasHeight / (maxValue))
-
-    return realValue * distanceOnCanvasPerValue
+    val step = canvasHeight / maxValue
+    return canvasHeight - (currentValue - minValue) * step
 }
 
 fun getTupleValuePoint(
@@ -52,7 +49,7 @@ fun getTupleValuePoint(
     return TupleValuePoint(startPoint, endPoint)
 }
 
-fun getTripleValuePoint(
+fun convertToQuadraticConnectionPoints(
     startValue: Float,
     midValue: Float,
     endValue: Float,

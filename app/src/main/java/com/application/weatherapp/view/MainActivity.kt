@@ -10,9 +10,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -71,7 +71,8 @@ class MainActivity : ComponentActivity() {
                 }
 
                 HourlyTemperatureForecastWidget(
-                    modifier = widgetModifier.padding(top = 340.dp),
+                    modifier = widgetModifier.padding(top = 350.dp),
+                    graphSize = Size(60F, 190F),
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
 
@@ -86,6 +87,7 @@ class MainActivity : ComponentActivity() {
 
                 HourlyPrecipitationForecastWidget(
                     modifier = widgetModifier,
+                    graphSize = Size(50F, 100F),
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
 
@@ -93,13 +95,15 @@ class MainActivity : ComponentActivity() {
 
                 HourlyWindForecastWidget(
                     modifier = widgetModifier,
+                    graphSize = Size(60F, 100F),
                     hourlyWeather = weatherViewModel.currentWeather.value!!.hourlyWeather
                 )
+
+                Spacer(modifier = spacerModifier)
             }
         }
     }
 
-    @Preview
     @Composable
     fun HomePreview() {
         WeatherAppTheme {

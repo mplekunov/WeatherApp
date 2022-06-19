@@ -3,6 +3,7 @@ package com.application.weatherapp.model.graph
 import android.graphics.PathMeasure
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -80,11 +81,11 @@ private fun getQuadraticCurvePath(
     val endPointY = LocalDensity.current.run { tripleValuePoint.endPoint.y.dp.toPx() }
 
 //    val canvasWidth = LocalDensity.current.run { canvasSize.width.dp.toPx() }
-    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
+//    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
 
     return when (isFilled) {
         true -> Path().apply {
-            moveTo(startPointX, canvasHeight)
+            moveTo(startPointX, Float.MAX_VALUE)
 
             lineTo(startPointX, startPointY)
 
@@ -93,7 +94,7 @@ private fun getQuadraticCurvePath(
                 endPointX, endPointY
             )
 
-            lineTo(endPointX, canvasHeight)
+            lineTo(endPointX, Float.MAX_VALUE)
 
             close()
         }
@@ -329,7 +330,7 @@ fun DrawTextInMidOfCurve(
             drawText(
                 String.format("%.1f", controlPoint.value),
                 controlPointX,
-                midY - 50,
+                midY,
                 android.graphics.Paint().apply {
                     textSize = 34F
                     textAlign = android.graphics.Paint.Align.CENTER

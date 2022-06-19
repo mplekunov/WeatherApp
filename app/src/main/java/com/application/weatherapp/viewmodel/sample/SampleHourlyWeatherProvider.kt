@@ -13,7 +13,7 @@ import kotlin.random.Random
 class SampleHourlyWeatherProvider : PreviewParameterProvider<HourlyWeather> {
     override val values: Sequence<HourlyWeather> = sequenceOf(HourlyWeather(mutableListOf()))
 
-    private val realTemperatureRand get() = Random.nextDouble(10.0, 40.0).toFloat()
+    private val realTemperatureRand get() = Random.nextDouble(0.0, 20.0).toFloat()
     private val feelingTemperatureRand get() = Random.nextDouble(10.0, 40.0).toFloat()
     private val cloudCoverRand get() = Random.nextDouble(0.0, 100.0).toFloat()
     private val humidityRand get() = Random.nextDouble(0.0, 100.0).toFloat()

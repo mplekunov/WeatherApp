@@ -2,7 +2,6 @@ package com.application.weatherapp.view.ui.weather
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +31,7 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value} %",
+                text = String.format("%.1f", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value) + "%",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 40.dp)
             )
@@ -45,7 +44,7 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value} %",
+                text = String.format("%.1f", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value) + "%",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 57.dp)
             )
@@ -58,7 +57,7 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value} mBar",
+                text = String.format("%.2f mBar", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 63.dp)
             )
@@ -71,7 +70,7 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = "${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value} C",
+                text = String.format("%.1f C", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 51.dp)
             )
