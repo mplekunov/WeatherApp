@@ -1,17 +1,17 @@
 package com.application.weatherapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.application.weatherapp.model.Temperature
 import com.application.weatherapp.model.TemperatureUnit
 import com.application.weatherapp.model.weather.DailyWeather
-import com.application.weatherapp.model.weather.HourlyWeather
-import com.application.weatherapp.model.weather.Weather
-import com.application.weatherapp.model.weather.WeatherType
-import com.application.weatherapp.model.weather.statistics.*
+import com.application.weatherapp.network.api.WeatherApi
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import kotlin.random.Random
+import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 class WeatherViewModel : ViewModel() {
     private val _currentWeather = MutableLiveData<DailyWeather>()
@@ -20,28 +20,31 @@ class WeatherViewModel : ViewModel() {
     private val _weeklyWeather = MutableLiveData<MutableList<DailyWeather>>()
     val weeklyWeather: LiveData<MutableList<DailyWeather>> = _weeklyWeather
 
+    private val _isError = MutableLiveData(false)
+    val isError: LiveData<Boolean> = _isError
+
     init {
         downloadWeatherData()
     }
 
     private fun downloadWeatherData() {
-        // For Testing
-        viewModelScope.launch {
-            val hourlyWeather = SampleHourlyWeatherProvider().values.first()
-
+        runBlocking {
+            val hourlyWeather =  WeatherApi.getHourlyForecast(27.937829582F, -82.238832378F) /*WeatherApi.retrofitService.getForecast(27.937829582F, -82.238832378F)*/
             _currentWeather.value = DailyWeather(hourlyWeather)
-            _currentWeather.value!!.dayTemperature = Temperature(15F, TemperatureUnit.CELSIUS)
-            _currentWeather.value!!.nightTemperature = Temperature(2F, TemperatureUnit.CELSIUS)
+        }
 
-            _weeklyWeather.value = mutableListOf(
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather),
-                DailyWeather(hourlyWeather)
-            )
+        viewModelScope.launch {
+            while (true) {
+                val hourlyWeather = WeatherApi.getHourlyForecast(
+                    27.937829582F,
+                    -82.238832378F
+                ) /*WeatherApi.retrofitService.getForecast(27.937829582F, -82.238832378F)*/
+                _currentWeather.value = DailyWeather(hourlyWeather)
+
+                delay(1.minutes)
+
+                Log.d("Hej", "Updated")
+            }
         }
     }
 }

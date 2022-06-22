@@ -38,5 +38,6 @@ open class Weather(
         WeatherType.THUNDERSTORM -> "Thunderstorm"
         WeatherType.HURRICANE -> "Hurricane"
         WeatherType.TORNADO -> "Tornado"
+        else -> "API Error"
     }
 }

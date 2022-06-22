@@ -103,11 +103,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    @Composable
-    fun HomePreview() {
-        WeatherAppTheme {
-            Home()
-        }
-    }
 }

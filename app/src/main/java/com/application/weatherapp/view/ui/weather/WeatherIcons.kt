@@ -32,5 +32,6 @@ fun getWeatherIconPainter(weatherType: WeatherType): Painter {
         WeatherType.HEAVY_RAIN -> painterResource(R.drawable.ic_heavy_rain)
         WeatherType.THUNDERSTORM -> painterResource(R.drawable.ic_thunderstorm)
         WeatherType.PARTLY_THUNDERSTORM -> painterResource(R.drawable.ic_partly_thunderstorm)
+        else -> painterResource(R.drawable.ic_partly_thunderstorm)
     }
 }

@@ -20,4 +20,5 @@ enum class WeatherType {
     THUNDERSTORM,
     HURRICANE,
     TORNADO,
+    NONE,
 }

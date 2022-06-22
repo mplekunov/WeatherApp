@@ -25,7 +25,8 @@ import kotlin.math.abs
 private fun PreviewHourlyTemperatureForecastWidget() {
     HourlyTemperatureForecastWidget(
         graphSize = Size(40F, 100F),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
 }
 
@@ -33,7 +34,7 @@ private fun PreviewHourlyTemperatureForecastWidget() {
 fun HourlyTemperatureForecastWidget(
     modifier: Modifier = Modifier,
     graphSize: Size,
-    hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
+    hourlyWeather: HourlyWeather
 ) {
     LazyRow(
         modifier = modifier

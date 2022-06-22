@@ -53,8 +53,12 @@ data class HourlyWeather(
         Precipitation(precipitationCollection.minOrNull() ?: 0F, weatherForecast.first().precipitation.unit)
 
     val maxWindSpeed get() =
-        Wind(Speed(windCollection.maxOrNull() ?: 0F, weatherForecast.first().wind.speed.unit), Direction(Direction.Directions.NONE))
+        Wind(Speed(windCollection.maxOrNull() ?: 0F, weatherForecast.first().wind.speed.unit),
+            Direction(Float.MAX_VALUE, DirectionUnit.DEGREES)
+        )
 
     val minWindSpeed get() =
-        Wind(Speed(windCollection.minOrNull() ?: 0F, weatherForecast.first().wind.speed.unit), Direction(Direction.Directions.NONE))
+        Wind(Speed(windCollection.minOrNull() ?: 0F, weatherForecast.first().wind.speed.unit),
+            Direction(Float.MAX_VALUE, DirectionUnit.DEGREES)
+        )
 }
