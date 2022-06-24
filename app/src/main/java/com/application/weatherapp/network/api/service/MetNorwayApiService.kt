@@ -1,12 +1,15 @@
-package com.application.weatherapp.network.api
+package com.application.weatherapp.network.api.service
 
 import com.application.weatherapp.model.Temperature
 import com.application.weatherapp.model.TemperatureUnit
+import com.application.weatherapp.model.formatter.TimeFormatter
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.model.weather.Weather
 import com.application.weatherapp.model.weather.WeatherType
 import com.application.weatherapp.model.weather.statistics.*
-import com.application.weatherapp.network.ApiResponse
+import com.application.weatherapp.network.NetworkInterceptor
+import com.application.weatherapp.network.api.WeatherApi
+import com.application.weatherapp.network.api.json.MetNorwayResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -14,11 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 private val BASE_URL = "https://api.met.no/weatherapi/locationforecast/2.0/"
 
@@ -29,28 +28,28 @@ private val moshi = Moshi.Builder()
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .client(OkHttpClient.Builder()
-            .addNetworkInterceptor(WeatherNetworkInterceptor())
+            .addNetworkInterceptor(NetworkInterceptor())
             .build())
     .baseUrl(BASE_URL)
     .build()
 
-interface WeatherApiService {
+interface MetNorwayApiService {
     @GET("complete?")
-    suspend fun getForecast(@Query("lat") latitude: Float, @Query("lon") longitude: Float): ApiResponse
+    suspend fun getForecast(@Query("lat") latitude: Double, @Query("lon") longitude: Double): MetNorwayResponse
 }
 
-object WeatherApi {
-    // Lazy object is created only at the time of first use
-    suspend fun getHourlyForecast(latitude: Float, longitude: Float): HourlyWeather {
-        val response = retrofit.create(WeatherApiService::class.java).getForecast(latitude, longitude)
+object MetNorwayApi : WeatherApi {
+    override suspend fun getHourlyForecast(latitude: Double, longitude: Double): HourlyWeather {
+        val response = retrofit.create(MetNorwayApiService::class.java).getForecast(latitude, longitude)
 
         val weatherForecast = mutableListOf<Weather>()
 
+        // First 24 hours from the current time
         for (i in 0 until 24) {
             val apiWeather = response.weatherForecast.hourlyForecast[i]
 
-            val apiWeatherDetails = apiWeather.weatherData.current.details
-            val dateTime = ZonedDateTime.parse(apiWeather.time).toOffsetDateTime().atZoneSameInstant(ZonedDateTime.now().zone).toLocalDateTime()
+            val apiWeatherDetails = apiWeather.forecast.current.details
+            val dateTime = TimeFormatter.formatZonedTime(ZonedDateTime.parse(apiWeather.time))
 
             val weather = Weather(
                 currentTemperature = Temperature(apiWeatherDetails.temperature, TemperatureUnit.CELSIUS),
@@ -58,14 +57,14 @@ object WeatherApi {
                 humidity = Humidity(apiWeatherDetails.humidity, HumidityUnit.PERCENTAGE),
                 cloudCover = CloudCover(apiWeatherDetails.cloudCover, CloudCoverUnit.PERCENTAGE),
                 dewPoint = DewPoint(Temperature(apiWeatherDetails.dewPoint, TemperatureUnit.CELSIUS)),
-                precipitation = Precipitation(apiWeather.weatherData.nextHour?.precipitation?.value ?: Float.MAX_VALUE, PrecipitationUnit.MILLIMETER),
+                precipitation = Precipitation(apiWeather.forecast.nextHour?.precipitation?.value ?: 0F, PrecipitationUnit.MILLIMETER),
                 wind = Wind(
                     Speed(apiWeatherDetails.windSpeed, SpeedUnit.METERS_PER_SECOND),
                     Direction(apiWeatherDetails.windDirection, DirectionUnit.DEGREES)
                 ),
                 feelingTemperature = Temperature(apiWeatherDetails.temperature, TemperatureUnit.CELSIUS),
                 date = dateTime,
-                weatherType = convertWeatherType(apiWeather.weatherData.nextHour?.weatherType?.type ?: "")
+                weatherType = convertWeatherType(apiWeather.forecast.nextHour?.weatherType?.type ?: "")
             )
 
             weatherForecast.add(weather)
@@ -119,9 +118,5 @@ object WeatherApi {
             "snowshowersandthunder" -> WeatherType.SNOWY
             else -> WeatherType.NONE
         }
-    }
-
-    val retrofitService : WeatherApiService by lazy {
-        retrofit.create(WeatherApiService::class.java)
     }
 }

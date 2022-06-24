@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,13 +14,13 @@ import com.application.weatherapp.model.weather.DailyWeather
 import com.application.weatherapp.viewmodel.DateTimeViewModel
 
 @Composable
-fun CurrentWeatherWidget(
+fun CurrentWeatherOverviewWidget(
     dailyWeather: DailyWeather,
     modifier: Modifier,
-    viewModel: DateTimeViewModel = viewModel()
+    dateTimeViewModel: DateTimeViewModel = viewModel()
 ) {
-    val currentDate = viewModel.date.observeAsState()
-    val currentTime = viewModel.time.observeAsState()
+    val currentDate = dateTimeViewModel.date.observeAsState()
+    val currentTime = dateTimeViewModel.time.observeAsState()
 
     Column(modifier = modifier) {
         DateTimeOverview(
