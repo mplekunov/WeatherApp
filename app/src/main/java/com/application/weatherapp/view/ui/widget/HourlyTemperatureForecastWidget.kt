@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,9 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
+import com.application.weatherapp.view.ui.icon.getWeatherIconPainter
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
-import kotlinx.coroutines.awaitCancellation
-import kotlin.math.abs
 
 @Preview
 @Composable

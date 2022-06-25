@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.application.weatherapp.model.weather.DailyWeather
+import com.application.weatherapp.view.ui.icon.getWeatherIconPainter
 import com.application.weatherapp.viewmodel.DateTimeViewModel
 
 @Composable

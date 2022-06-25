@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.icon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter

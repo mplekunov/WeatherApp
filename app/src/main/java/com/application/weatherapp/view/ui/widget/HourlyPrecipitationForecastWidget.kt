@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
