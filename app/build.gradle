@@ -29,9 +29,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     buildFeatures {
         compose true
     }
@@ -59,6 +61,10 @@ dependencies {
     implementation('androidx.lifecycle:lifecycle-runtime-ktx:2.4.1')
     implementation('androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1')
 
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2"
+
     // JUnit
     testImplementation('junit:junit:4.13.2')
 
@@ -70,6 +76,24 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
 
+    // Bug Fix for the bug which was introduced with 1.1.1 compose (Preview wasn't showing up)
     debugImplementation "androidx.customview:customview:1.2.0-alpha01"
     debugImplementation "androidx.customview:customview-poolingcontainer:1.0.0-alpha01"
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // Retrofit with Moshi Converter
+    implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    // Location services from google play
+    implementation ('com.google.android.gms:play-services-location:20.0.0')
+
+    // Experimental PermissionState
+    implementation("com.google.accompanist:accompanist-permissions:0.24.11-rc")
+
+
+    //Room
+//    implementation("androidx.room:room-*:2.4.2")
 }

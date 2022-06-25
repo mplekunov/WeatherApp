@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,16 +16,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
+import com.application.weatherapp.view.ui.icon.getWeatherIconPainter
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
-import kotlinx.coroutines.awaitCancellation
-import kotlin.math.abs
 
 @Preview
 @Composable
 private fun PreviewHourlyTemperatureForecastWidget() {
     HourlyTemperatureForecastWidget(
         graphSize = Size(40F, 100F),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
 }
 
@@ -33,7 +33,7 @@ private fun PreviewHourlyTemperatureForecastWidget() {
 fun HourlyTemperatureForecastWidget(
     modifier: Modifier = Modifier,
     graphSize: Size,
-    hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
+    hourlyWeather: HourlyWeather
 ) {
     LazyRow(
         modifier = modifier

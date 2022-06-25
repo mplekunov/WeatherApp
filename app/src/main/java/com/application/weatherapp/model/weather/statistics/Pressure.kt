@@ -6,5 +6,6 @@ data class Pressure(
 )
 
 enum class PressureUnit {
-    MILLI_BAR
+    MILLI_BAR,
+    HECTOPASCAL
 }

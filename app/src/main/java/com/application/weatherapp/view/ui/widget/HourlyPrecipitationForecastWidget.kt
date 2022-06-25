@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
@@ -26,7 +26,8 @@ import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 private fun PreviewHourlyPrecipitationForecastWidget() {
     HourlyPrecipitationForecastWidget(
         graphSize = Size(40F, 100F),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
 }
 
@@ -34,7 +35,7 @@ private fun PreviewHourlyPrecipitationForecastWidget() {
 fun HourlyPrecipitationForecastWidget(
     modifier: Modifier = Modifier,
     graphSize: Size,
-    hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
+    hourlyWeather: HourlyWeather
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
 

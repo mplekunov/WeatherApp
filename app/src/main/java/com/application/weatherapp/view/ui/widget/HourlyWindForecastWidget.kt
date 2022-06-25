@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,7 +26,8 @@ import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 private fun PreviewHourlyWindForecastWidget() {
     HourlyWindForecastWidget(
         graphSize = Size(40F, 100F),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
 }
 
@@ -34,7 +35,7 @@ private fun PreviewHourlyWindForecastWidget() {
 fun HourlyWindForecastWidget(
     modifier: Modifier = Modifier,
     graphSize: Size,
-    hourlyWeather: HourlyWeather = SampleHourlyWeatherProvider().values.first()
+    hourlyWeather: HourlyWeather
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
     val windSpeedFontSize = 40.sp
@@ -73,12 +74,12 @@ fun HourlyWindForecastWidget(
                     .width(2.dp)
             )
 
-            Text(
-                text = hourlyWeather.weatherForecast.first().wind.direction.toString(),
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            )
+//            Text(
+//                text = hourlyWeather.weatherForecast.first().wind.direction.toString(),
+//                fontSize = 16.sp,
+//                modifier = Modifier
+//                    .align(Alignment.CenterVertically)
+//            )
         }
 
         LazyRow(

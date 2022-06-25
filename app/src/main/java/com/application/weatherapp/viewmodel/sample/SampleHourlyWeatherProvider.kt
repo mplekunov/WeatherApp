@@ -26,11 +26,11 @@ class SampleHourlyWeatherProvider : PreviewParameterProvider<HourlyWeather> {
             0,
             WeatherType.values().lastIndex
         )]
-    private val direction
-        get() = Direction.Directions.values()[Random.nextInt(
-            0,
-            Direction.Directions.values().lastIndex
-        )]
+//    private val direction
+//        get() = Direction.values()[Random.nextInt(
+//            0,
+//            Direction.Directions.values().lastIndex
+//        )]
 
     init {
         val hourlyWeather = HourlyWeather(mutableListOf())
@@ -57,7 +57,7 @@ class SampleHourlyWeatherProvider : PreviewParameterProvider<HourlyWeather> {
                     pressure = Pressure(pressureRand, PressureUnit.MILLI_BAR),
                     wind = Wind(
                         Speed(windRand, SpeedUnit.KILOMETERS_PER_HOUR),
-                        Direction(direction)
+                        Direction(Float.MAX_VALUE, DirectionUnit.DEGREES)
                     ),
                     weatherType = weatherType
                 )

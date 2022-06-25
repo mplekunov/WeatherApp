@@ -7,5 +7,6 @@ class Speed(
 
 enum class SpeedUnit {
     KILOMETERS_PER_HOUR,
-    METERS_PER_HOUR
+    METERS_PER_HOUR,
+    METERS_PER_SECOND
 }

@@ -1,4 +1,4 @@
-package com.application.weatherapp.view.ui.weather
+package com.application.weatherapp.view.ui.icon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
@@ -32,5 +32,6 @@ fun getWeatherIconPainter(weatherType: WeatherType): Painter {
         WeatherType.HEAVY_RAIN -> painterResource(R.drawable.ic_heavy_rain)
         WeatherType.THUNDERSTORM -> painterResource(R.drawable.ic_thunderstorm)
         WeatherType.PARTLY_THUNDERSTORM -> painterResource(R.drawable.ic_partly_thunderstorm)
+        else -> painterResource(R.drawable.ic_partly_thunderstorm)
     }
 }
