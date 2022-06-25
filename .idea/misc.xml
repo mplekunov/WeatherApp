@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_attention.xml" value="0.1265" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloudy.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloudy_snowing.xml" value="0.2085" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_day_partly_cloudy.xml" value="0.292" />

@@ -24,6 +24,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val weatherViewModel: WeatherViewModel by viewModels()
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var homeLocation: Location
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +72,9 @@ class MainActivity : ComponentActivity() {
         val currentLocation = fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
 
         currentLocation.addOnCompleteListener {
-            val location = Location(it.result.latitude, it.result.longitude)
+            homeLocation = Location(it.result.latitude, it.result.longitude)
+
+            locationViewModel.searchForLocation(homeLocation.latitude, homeLocation.longitude, NominatimApi)
 
             weatherViewModel.currentWeather.observe(this) {
                 setContent {
@@ -83,9 +87,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            weatherViewModel.downloadWeatherData(location, MetNorwayApi)
-
-            Log.d("Test", "We are called")
+            locationViewModel.locations.observe(this) {
+                weatherViewModel.downloadWeatherData(homeLocation, MetNorwayApi)
+            }
         }
 
         requestPermissionLauncher = registerForActivityResult(
@@ -125,6 +129,7 @@ class MainActivity : ComponentActivity() {
                 bottom = 10.dp
             )
             .fillMaxWidth()
+
 
         val spacerModifier = Modifier
             .padding(top = 16.dp)

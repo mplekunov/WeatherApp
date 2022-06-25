@@ -7,7 +7,7 @@ import com.application.weatherapp.network.api.WeatherApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 class WeatherViewModel : ViewModel() {
     private val _currentWeather = MutableLiveData<DailyWeather>()
@@ -26,7 +26,7 @@ class WeatherViewModel : ViewModel() {
                 _currentWeather.value = DailyWeather(hourlyWeather)
                 _currentWeather.value = _currentWeather.value
 
-                delay(10.seconds)
+                delay(10.minutes)
             }
         }
     }

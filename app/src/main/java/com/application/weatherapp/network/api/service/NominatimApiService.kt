@@ -1,8 +1,10 @@
 package com.application.weatherapp.network.api.service
 
+import androidx.compose.ui.unit.Dp
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.NetworkInterceptor
 import com.application.weatherapp.network.api.GeocoderApi
+import com.application.weatherapp.network.api.json.Feature
 import com.application.weatherapp.network.api.json.NominatimResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -30,17 +32,25 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
+private val QUERY_DELAY = 1.1.seconds
+
 interface NominatimApiService {
     @GET("search?format=geojson&addressdetails=1&accept-language=en")
     suspend fun getLocations(
         @Query("q") address: String,
         @Query("limit") maxSize: Int
     ): NominatimResponse
+
+    @GET("reverse?format=geojson&addressdetails=1&accept-language=en")
+    suspend fun getLocation(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double
+    ) : NominatimResponse
 }
 
 object NominatimApi : GeocoderApi {
     override suspend fun getLocations(address: String, maxSize: Int): List<Location> {
-        delay(1.1.seconds)
+        delay(QUERY_DELAY)
 
         val response = retrofit.create(NominatimApiService::class.java).getLocations(address, 50)
 
@@ -55,24 +65,18 @@ object NominatimApi : GeocoderApi {
 
             val feature = qualifiedResponse[i]
 
-            val city = feature.locationInfo.address.city
-            val state = feature.locationInfo.address.state
-            val country = feature.locationInfo.address.country
-
-            val longitude = feature.locationPosition.coordinates[0]
-            val latitude = feature.locationPosition.coordinates[1]
-
-            val location = Location(latitude, longitude)
-
-            location.city = city ?: ""
-            location.state = state ?: ""
-            location.country = country ?: ""
-
-            locations.add(location)
-
+            locations.add(feature.toLocation())
         }
 
         return locations.toList()
+    }
+
+    override suspend fun getLocation(latitude: Double, longitude: Double): Location {
+        delay(QUERY_DELAY)
+
+        val response = retrofit.create(NominatimApiService::class.java).getLocation(latitude, longitude)
+
+        return response.features.first().toLocation()
     }
 
     private fun isRequiredType(type: String): Boolean {
@@ -85,4 +89,20 @@ object NominatimApi : GeocoderApi {
         }
     }
 
+    private fun Feature.toLocation(): Location {
+        val city = this.locationInfo.address.city
+        val state = this.locationInfo.address.state
+        val country = this.locationInfo.address.country
+
+        val longitude = this.locationPosition.coordinates[0]
+        val latitude = this.locationPosition.coordinates[1]
+
+        val location = Location(latitude, longitude)
+
+        location.city = city ?: ""
+        location.state = state ?: ""
+        location.country = country ?: ""
+
+        return location
+    }
 }
