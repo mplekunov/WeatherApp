@@ -4,4 +4,5 @@ Going to use Jetpack Compose library for UI and stuff.... Ideally it should be m
 
 ##In Development
 
-![in_development_x480](https://user-images.githubusercontent.com/38502074/174457496-c2f7533a-d4e6-407e-9e68-1a6643a7bd16.gif)
+
+![weather_app_x480](https://user-images.githubusercontent.com/38502074/175783973-ac04d21f-420d-4749-800c-b6499c21513d.gif)
