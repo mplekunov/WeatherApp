@@ -5,8 +5,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -44,21 +42,33 @@ class MainActivity : ComponentActivity() {
     private val locationViewModel: LocationViewModel by viewModels()
     private val weatherViewModel: WeatherViewModel by viewModels()
 
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var homeLocation: Location
 
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val currentLocation = fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+        setContent {
+            WeatherAppTheme {
+                PermissionScreen()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun onPermissionReceived() {
+        val currentLocation =
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
 
         currentLocation.addOnCompleteListener {
             homeLocation = Location(it.result.latitude, it.result.longitude)
 
-            locationViewModel.searchForLocation(homeLocation.latitude, homeLocation.longitude, NominatimApi)
+            locationViewModel.searchForLocation(
+                homeLocation.latitude,
+                homeLocation.longitude,
+                NominatimApi
+            )
 
             weatherViewModel.currentWeather.observe(this) {
                 setContent {
@@ -73,26 +83,42 @@ class MainActivity : ComponentActivity() {
 
             locationViewModel.locations.observe(this) {
                 weatherViewModel.downloadWeatherData(homeLocation, MetNorwayApi)
+                locationViewModel.setCurrentLocation(homeLocation)
             }
         }
+    }
 
-        requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            var isGranted = false
-            permissions.forEach { isGranted = it.value }
-
-            if (!isGranted) {
-               onDestroy()
-            }
-        }
-
-        requestPermissionLauncher.launch(
-            arrayOf(
+    @OptIn(ExperimentalPermissionsApi::class)
+    @SuppressLint("MissingPermission")
+    @Composable
+    private fun PermissionScreen() {
+        val locationPermission = rememberMultiplePermissionsState(
+            listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
+
+        if (locationPermission.allPermissionsGranted)
+            onPermissionReceived()
+        else {
+            Surface(
+                color = Color.Magenta,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Column {
+                    Text(text = "Give me your location you weirdo... I wanna know where you are... he he he")
+
+                    Button(
+                        onClick = {
+                           locationPermission.launchMultiplePermissionRequest()
+                        }
+                    ) {
+                        Text(text = "GIVE ME LOCATION")
+                    }
+                }
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -154,7 +180,7 @@ class MainActivity : ComponentActivity() {
 
                 HourlyTemperatureForecastWidget(
                     modifier = widgetModifier.padding(top = 350.dp),
-                    graphSize = Size(60F, 190F),
+                    graphSize = Size(60F, 200F),
                     hourlyWeather = dailyWeather.value!!.hourlyWeather
                 )
 
