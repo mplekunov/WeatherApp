@@ -49,9 +49,7 @@ fun HomeScreen(
         .clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() }
-        ) {
-            focusRequester.requestFocus()
-        }
+        ) { focusRequester.requestFocus() }
         .focusRequester(focusRequester)
         .focusable()
     ) {

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,7 +37,7 @@ import com.application.weatherapp.R
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.api.service.MetNorwayApi
 import com.application.weatherapp.network.api.service.NominatimApi
-import com.application.weatherapp.view.ui.animation.SurfaceAnimation
+import com.application.weatherapp.view.ui.animation.PopupComponentAnimation
 import com.application.weatherapp.view.ui.button.CircleButton
 import com.application.weatherapp.view.ui.text.EmptyTextToolbar
 
@@ -184,9 +183,10 @@ private fun QueryResultPopup(
         alignment = Alignment.TopStart,
         offset = offset
     ) {
-        SurfaceAnimation(
+        PopupComponentAnimation(
             visible = visible,
-            durationMills = 300
+            durationMills = 300,
+            startHeight = 0.dp
         ) {
             Surface(
                 modifier = modifier
