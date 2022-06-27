@@ -1,5 +1,8 @@
 package com.application.weatherapp.view.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,31 +37,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.application.weatherapp.R
+import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.api.service.MetNorwayApi
 import com.application.weatherapp.network.api.service.NominatimApi
 import com.application.weatherapp.view.ui.animation.PopupComponentAnimation
 import com.application.weatherapp.view.ui.button.CircleButton
 import com.application.weatherapp.view.ui.text.EmptyTextToolbar
-
 import com.application.weatherapp.viewmodel.LocationViewModel
 import com.application.weatherapp.viewmodel.WeatherViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.timerTask
 
+@OptIn(ExperimentalPermissionsApi::class)
+private lateinit var _locationPermission: MultiplePermissionsState
 private lateinit var _weatherViewModel: WeatherViewModel
 private lateinit var _locationViewModel: LocationViewModel
 private lateinit var _focusManager: FocusManager
 
+@OptIn(ExperimentalPermissionsApi::class)
+@SuppressLint("MissingPermission")
 @Composable
 fun LocationSearchBar(
     modifier: Modifier,
     locationViewModel: LocationViewModel,
     weatherViewModel: WeatherViewModel
 ) {
+    _locationPermission = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    )
     _locationViewModel = locationViewModel
     _weatherViewModel = weatherViewModel
     _focusManager = LocalFocusManager.current
+
+    val lifecycle = LocalLifecycleOwner.current
+    val density = LocalDensity.current
+    val context = LocalContext.current
 
     var textAddress by remember { mutableStateOf("") }
 
@@ -67,19 +88,19 @@ fun LocationSearchBar(
     var startY by remember { mutableStateOf(0) }
     var startX by remember { mutableStateOf(0) }
 
+    val focusRequester = remember { FocusRequester() }
+
+    val scope = rememberCoroutineScope()
+
     val locations = locationViewModel.locations.observeAsState()
     val isSearching = locationViewModel.isSearching.observeAsState()
 
-    locationViewModel.currentLocation.observe(LocalLifecycleOwner.current) {
+    locationViewModel.currentLocation.observe(lifecycle) {
         if (!hasFocus)
             textAddress = it.toString()
     }
 
-    val focusRequester = remember { FocusRequester() }
-
     val shape = RoundedCornerShape(12.dp)
-
-    val density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextToolbar provides EmptyTextToolbar()
@@ -89,7 +110,7 @@ fun LocationSearchBar(
             onValueChange = {
                 textAddress = it
 
-                locationViewModel.searchForLocations(textAddress, 3, NominatimApi)
+                locationViewModel.getLocations(textAddress, 3, NominatimApi)
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -116,7 +137,19 @@ fun LocationSearchBar(
                 },
             trailingIcon = {
                 CircleButton(
-                    onClick = { },
+                    onClick = {
+                        scope.launch {
+                            if (!_locationPermission.allPermissionsGranted)
+                                _locationPermission.launchMultiplePermissionRequest()
+                            else {
+                                val currentLocation =
+                                    LocationService.getCurrentLocation(context, NominatimApi)
+
+                                _locationViewModel.setCurrentLocation(currentLocation)
+                                _weatherViewModel.downloadWeatherData(currentLocation, MetNorwayApi)
+                            }
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     modifier = Modifier.padding(end = 4.dp)
                 ) {

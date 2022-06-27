@@ -1,5 +1,6 @@
 package com.application.weatherapp.viewmodel
 
+
 import androidx.lifecycle.*
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.api.GeocoderApi
@@ -15,8 +16,11 @@ class LocationViewModel : ViewModel() {
     private val _isSearching = MutableLiveData(false)
     val isSearching: LiveData<Boolean> = _isSearching
 
-
-    fun searchForLocations(queryAddress: String, maxNumOfResults: Int, geocoder: GeocoderApi) {
+    /**
+     * Gets possible locations from [queryAddress]
+     * Updates [locations] if results were found
+     */
+    fun getLocations(queryAddress: String, maxNumOfResults: Int, geocoder: GeocoderApi) {
         cancelAllJobs()
 
         if (queryAddress.isNotEmpty()) {
@@ -30,8 +34,11 @@ class LocationViewModel : ViewModel() {
         }
     }
 
-
-    fun searchForLocation(latitude: Double, longitude: Double, geocoder: GeocoderApi) {
+    /**
+     * Gets location information at [latitude] [longitude]
+     * Updates [locations] if results were found
+     */
+    fun getLocation(latitude: Double, longitude: Double, geocoder: GeocoderApi) {
         cancelAllJobs()
 
         viewModelScope.launch {
@@ -43,9 +50,13 @@ class LocationViewModel : ViewModel() {
         }
     }
 
+    /**
+     *  Sets [currentLocation]
+     */
     fun setCurrentLocation(location: Location) {
         _currentLocation.value = location
     }
+
 
     private fun cancelAllJobs() {
         viewModelScope.coroutineContext.cancelChildren()

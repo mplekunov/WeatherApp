@@ -1,6 +1,5 @@
 package com.application.weatherapp.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,7 +25,6 @@ class DateTimeViewModel : ViewModel() {
     private fun updateCurrentTime() {
         viewModelScope.launch {
             while (true) {
-                Log.d("ViewModels", "DateTimeViewModel")
                 val localDateTime = LocalDateTime.now()
 
                 _liveDate.value = localDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))

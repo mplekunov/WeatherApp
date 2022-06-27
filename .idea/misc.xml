@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.164" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_attention.xml" value="0.1265" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloudy.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloudy_snowing.xml" value="0.2085" />
@@ -12,6 +13,7 @@
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_heavy_rain.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_heavy_snow.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_hurricane.xml" value="0.292" />
+        <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.164" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_night.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_night_partly_cloudy.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_partly_rainy.xml" value="0.292" />
@@ -27,6 +29,8 @@
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_thunderstorm.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_tornado.xml" value="0.292" />
         <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_windy.xml" value="0.292" />
+        <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.164" />
+        <entry key="..\:/Users/Michael/AndroidStudioProjects/WeatherApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.164" />
       </map>
     </option>
   </component>
