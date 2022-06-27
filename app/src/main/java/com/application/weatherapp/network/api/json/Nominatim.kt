@@ -18,6 +18,8 @@ data class Location(
 
 data class Address(
     @Json(name = "city") val city: String?,
+    @Json(name = "locality") val locality: String?,
+    @Json(name = "hamlet") val hamlet: String?,
     @Json(name = "state") val state: String?,
     @Json(name = "country") val country: String?
 )
