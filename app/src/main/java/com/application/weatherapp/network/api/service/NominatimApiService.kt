@@ -1,6 +1,5 @@
 package com.application.weatherapp.network.api.service
 
-import androidx.compose.ui.unit.Dp
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.NetworkInterceptor
 import com.application.weatherapp.network.api.GeocoderApi
@@ -72,7 +71,7 @@ object NominatimApi : GeocoderApi {
     }
 
     override suspend fun getLocation(latitude: Double, longitude: Double): Location {
-        delay(QUERY_DELAY)
+        delay(QUERY_DELAY   )
 
         val response = retrofit.create(NominatimApiService::class.java).getLocation(latitude, longitude)
 

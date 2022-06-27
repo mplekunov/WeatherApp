@@ -3,14 +3,8 @@ package com.application.weatherapp.view.ui.screen
 import android.Manifest
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,10 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import com.application.weatherapp.model.Location
+import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.network.api.service.MetNorwayApi
 import com.application.weatherapp.network.api.service.NominatimApi
 import com.application.weatherapp.ui.theme.WeatherAppTheme
@@ -41,8 +31,6 @@ import com.application.weatherapp.viewmodel.WeatherViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -61,8 +49,8 @@ fun PermissionScreen(
 ) {
     _locationPermission = rememberMultiplePermissionsState(
         listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
     )
 
@@ -257,38 +245,24 @@ private fun PrepareHomeScreen() {
     val context = LocalContext.current
 
     LaunchedEffect(null) {
-        val currentLocation = LocationServices
-            .getFusedLocationProviderClient(context)
-            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+        val currentLocation = LocationService.getCurrentLocation(context, NominatimApi)
 
-        currentLocation.addOnCompleteListener {
-            val homeLocation = Location(it.result.latitude, it.result.longitude)
+        _locationViewModel.setCurrentLocation(currentLocation)
+        _weatherViewModel.downloadWeatherData(currentLocation, MetNorwayApi)
 
-            _locationViewModel.searchForLocation(
-                homeLocation.latitude,
-                homeLocation.longitude,
-                NominatimApi
-            )
+        _weatherViewModel.currentWeather.observe(lifecycleOwner) {
+            Timer().schedule(timerTask {
+                isHomeScreenReady = true
 
-            _locationViewModel.locations.observe(lifecycleOwner) {
-                _weatherViewModel.downloadWeatherData(homeLocation, MetNorwayApi)
-                _locationViewModel.setCurrentLocation(homeLocation)
-            }
-
-            _weatherViewModel.currentWeather.observe(lifecycleOwner) {
-                Timer().schedule(timerTask {
-                    isHomeScreenReady = true
-
-                    (context as ComponentActivity).setContent {
-                        WeatherAppTheme {
-                            HomeScreen(
-                                _weatherViewModel,
-                                _locationViewModel
-                            )
-                        }
+                (context as ComponentActivity).setContent {
+                    WeatherAppTheme {
+                        HomeScreen(
+                            _weatherViewModel,
+                            _locationViewModel
+                        )
                     }
-                }, 5000)
-            }
+                }
+            }, 5000)
         }
     }
 }
