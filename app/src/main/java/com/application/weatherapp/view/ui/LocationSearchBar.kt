@@ -2,8 +2,6 @@ package com.application.weatherapp.view.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +35,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.lifecycle.viewModelScope
 import com.application.weatherapp.R
 import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.model.Location
@@ -51,7 +48,6 @@ import com.application.weatherapp.viewmodel.WeatherViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -60,7 +56,9 @@ import kotlin.concurrent.timerTask
 private lateinit var _locationPermission: MultiplePermissionsState
 private lateinit var _weatherViewModel: WeatherViewModel
 private lateinit var _locationViewModel: LocationViewModel
+
 private lateinit var _focusManager: FocusManager
+private lateinit var _isSearching: MutableState<Boolean>
 
 @OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("MissingPermission")
@@ -82,7 +80,6 @@ fun LocationSearchBar(
 
     val lifecycle = LocalLifecycleOwner.current
     val density = LocalDensity.current
-    val context = LocalContext.current
 
     var textAddress by remember { mutableStateOf("") }
 
@@ -93,21 +90,19 @@ fun LocationSearchBar(
 
     val focusRequester = remember { FocusRequester() }
 
-    val scope = rememberCoroutineScope()
+    _isSearching = remember { mutableStateOf(false) }
 
     val locations = locationViewModel.locations.observeAsState()
-
-    var isSearching by remember { mutableStateOf(false) }
 
     locationViewModel.currentLocation.observe(lifecycle) {
         if (!hasFocus)
             textAddress = it.toString()
 
-        isSearching = false
+        _isSearching.value = false
     }
 
     locationViewModel.locations.observe(lifecycle) {
-        isSearching = false
+        _isSearching.value = false
     }
 
     val shape = RoundedCornerShape(12.dp)
@@ -120,7 +115,7 @@ fun LocationSearchBar(
             onValueChange = {
                 textAddress = it
 
-                isSearching = true
+                _isSearching.value = true
                 locationViewModel.getLocations(textAddress, 3, NominatimApi)
             },
             singleLine = true,
@@ -147,44 +142,10 @@ fun LocationSearchBar(
                     }
                 },
             trailingIcon = {
-                CircleButton(
-                    onClick = {
-                        scope.launch {
-                            if (!_locationPermission.allPermissionsGranted)
-                                _locationPermission.launchMultiplePermissionRequest()
-                            else {
-                                isSearching = true
-
-                                val currentLocation =
-                                    LocationService.getCurrentLocation(context, NominatimApi)
-
-                                _locationViewModel.setCurrentLocation(currentLocation)
-                                _weatherViewModel.downloadWeatherData(currentLocation, MetNorwayApi)
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    modifier = Modifier.padding(end = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Location",
-                        tint = MaterialTheme.colorScheme.onTertiary
-                    )
-                }
+                LocationButton(modifier = Modifier.padding(end = 4.dp))
             },
             leadingIcon = {
-                CircleButton(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    modifier = Modifier.padding(start = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Menu",
-                        tint = MaterialTheme.colorScheme.onTertiary,
-                    )
-                }
+                MenuButton(modifier = Modifier.padding(start = 4.dp))
             },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = MaterialTheme.colorScheme.tertiary,
@@ -201,7 +162,7 @@ fun LocationSearchBar(
         UploadingPopup(
             offset = IntOffset(startX, startY),
             shape = shape,
-            visible = isSearching,
+            visible = _isSearching.value,
             modifier = Modifier
                 .padding(top = 4.dp, start = 16.dp, end = 16.dp)
         )
@@ -211,10 +172,71 @@ fun LocationSearchBar(
             visible = hasFocus,
             shape = shape,
             locations = locations.value!!,
-            modifier = modifier.padding(top = 4.dp)
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp)
+                .shadow(
+                    elevation = 4.dp,
+                    shape = shape,
+                    clip = true,
+                    ambientColor = Color.Gray,
+                    spotColor = Color.Gray
+                )
         )
     }
 
+}
+
+@Composable
+private fun MenuButton(
+    modifier: Modifier = Modifier
+) {
+    CircleButton(
+        onClick = { },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = "Menu",
+            tint = MaterialTheme.colorScheme.onTertiary,
+        )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun LocationButton(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    CircleButton(
+        onClick = {
+            scope.launch {
+                if (!_locationPermission.allPermissionsGranted)
+                    _locationPermission.launchMultiplePermissionRequest()
+                else {
+                    _isSearching.value = true
+
+                    val currentLocation =
+                        LocationService.getCurrentLocation(context, NominatimApi)
+
+                    _locationViewModel.setCurrentLocation(currentLocation)
+                    _weatherViewModel.downloadWeatherData(currentLocation, MetNorwayApi)
+                }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = "Location",
+            tint = MaterialTheme.colorScheme.onTertiary
+        )
+    }
 }
 
 @Composable
@@ -235,56 +257,59 @@ private fun QueryResultPopup(
             startHeight = 0.dp
         ) {
             Surface(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = shape,
-                        clip = true,
-                        ambientColor = Color.Gray,
-                        spotColor = Color.Gray
-                    ),
+                modifier = modifier,
                 color = Color.DarkGray,
                 shape = shape
             ) {
-                Column {
-                    for (i in locations.indices) {
-                        LocationText(
-                            modifier = Modifier
-                                .clickable {
-                                    Timer().schedule(
-                                        timerTask {
-                                            _weatherViewModel.downloadWeatherData(
-                                                locations[i],
-                                                MetNorwayApi
-                                            )
-                                        }, 500
-                                    )
+                QueryResultItem(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    locations = locations
+                )
+            }
+        }
+    }
+}
 
-                                    _locationViewModel.setCurrentLocation(locations[i])
-                                    _focusManager.clearFocus()
-                                }
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            location = locations[i]
+@Composable
+private fun QueryResultItem(
+    modifier: Modifier = Modifier,
+    locations: List<Location>
+) {
+    Column {
+        for (i in locations.indices) {
+            LocationText(
+                modifier = modifier
+                    .clickable {
+                        Timer().schedule(
+                            timerTask {
+                                _weatherViewModel.downloadWeatherData(
+                                    locations[i],
+                                    MetNorwayApi
+                                )
+                            }, 500
                         )
 
-                        if (i != locations.lastIndex) {
-                            Spacer(
-                                modifier = Modifier
-                                    .padding(
-                                        top = 4.dp,
-                                        bottom = 4.dp,
-                                        start = 8.dp,
-                                        end = 8.dp
-                                    )
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(Color.Gray)
-                            )
-                        }
-                    }
-                }
+                        _locationViewModel.setCurrentLocation(locations[i])
+                        _focusManager.clearFocus()
+                    },
+                location = locations[i]
+            )
+
+            if (i != locations.lastIndex) {
+                Spacer(
+                    modifier = Modifier
+                        .padding(
+                            top = 4.dp,
+                            bottom = 4.dp,
+                            start = 8.dp,
+                            end = 8.dp
+                        )
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color.Gray)
+                )
             }
         }
     }
@@ -344,6 +369,7 @@ private fun UploadingPopup(
     shape: Shape
 ) {
     var maxWidth by remember { mutableStateOf(0.dp) }
+
     val insideBarWidth = 80.dp
     val barHeight = 4.dp
 
@@ -351,15 +377,16 @@ private fun UploadingPopup(
 
     val targetValue = maxWidth - insideBarWidth
 
-    val moveAnimation by rememberInfiniteTransition().animateValue(
-        initialValue = 0.dp,
-        targetValue = targetValue,
-        typeConverter = Dp.VectorConverter,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
+    val moveAnimation by rememberInfiniteTransition()
+        .animateValue(
+            initialValue = 0.dp,
+            targetValue = targetValue,
+            typeConverter = Dp.VectorConverter,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000),
+                repeatMode = RepeatMode.Reverse
+            )
         )
-    )
 
     if (visible) {
         Popup(

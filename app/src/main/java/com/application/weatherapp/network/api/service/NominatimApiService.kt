@@ -101,8 +101,9 @@ object NominatimApi : GeocoderApi {
         val location = Location(latitude, longitude)
 
         location.city = if (city.isNullOrEmpty() && locality.isNullOrEmpty() && hamlet.isNullOrEmpty()) ""
-        else if (city.isNullOrEmpty() && locality.isNullOrEmpty()) hamlet!!
-        else locality!!
+        else if (locality.isNullOrEmpty() && hamlet.isNullOrEmpty()) city!!
+        else if (locality.isNullOrEmpty()) hamlet!!
+        else locality
 
         location.state = state ?: ""
         location.country = country ?: ""
