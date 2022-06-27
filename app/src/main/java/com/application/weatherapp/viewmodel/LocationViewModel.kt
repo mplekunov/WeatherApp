@@ -13,21 +13,16 @@ class LocationViewModel : ViewModel() {
     private val _currentLocation = MutableLiveData<Location>()
     val currentLocation: LiveData<Location> = _currentLocation
 
-    private val _isSearching = MutableLiveData(false)
-    val isSearching: LiveData<Boolean> = _isSearching
-
     /**
      * Gets possible locations from [queryAddress]
      * Updates [locations] if results were found
      */
     fun getLocations(queryAddress: String, maxNumOfResults: Int, geocoder: GeocoderApi) {
-        cancelAllJobs()
+        viewModelScope.coroutineContext.cancelChildren()
 
         if (queryAddress.isNotEmpty()) {
             viewModelScope.launch {
-                _isSearching.postValue(true)
                 val locations = geocoder.getLocations(queryAddress, maxNumOfResults)
-                _isSearching.postValue(false)
 
                 _locations.postValue(locations)
             }
@@ -39,12 +34,10 @@ class LocationViewModel : ViewModel() {
      * Updates [locations] if results were found
      */
     fun getLocation(latitude: Double, longitude: Double, geocoder: GeocoderApi) {
-        cancelAllJobs()
+        viewModelScope.coroutineContext.cancelChildren()
 
         viewModelScope.launch {
-            _isSearching.postValue(true)
             val location = geocoder.getLocation(latitude, longitude)
-            _isSearching.postValue(false)
 
             _locations.postValue(listOf(location))
         }
@@ -55,11 +48,5 @@ class LocationViewModel : ViewModel() {
      */
     fun setCurrentLocation(location: Location) {
         _currentLocation.value = location
-    }
-
-
-    private fun cancelAllJobs() {
-        viewModelScope.coroutineContext.cancelChildren()
-        _isSearching.postValue(false)
     }
 }

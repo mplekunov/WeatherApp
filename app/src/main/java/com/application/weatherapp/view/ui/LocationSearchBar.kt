@@ -2,6 +2,7 @@ package com.application.weatherapp.view.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewModelScope
 import com.application.weatherapp.R
 import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.model.Location
@@ -49,6 +51,7 @@ import com.application.weatherapp.viewmodel.WeatherViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -93,11 +96,18 @@ fun LocationSearchBar(
     val scope = rememberCoroutineScope()
 
     val locations = locationViewModel.locations.observeAsState()
-    val isSearching = locationViewModel.isSearching.observeAsState()
+
+    var isSearching by remember { mutableStateOf(false) }
 
     locationViewModel.currentLocation.observe(lifecycle) {
         if (!hasFocus)
             textAddress = it.toString()
+
+        isSearching = false
+    }
+
+    locationViewModel.locations.observe(lifecycle) {
+        isSearching = false
     }
 
     val shape = RoundedCornerShape(12.dp)
@@ -110,6 +120,7 @@ fun LocationSearchBar(
             onValueChange = {
                 textAddress = it
 
+                isSearching = true
                 locationViewModel.getLocations(textAddress, 3, NominatimApi)
             },
             singleLine = true,
@@ -142,6 +153,8 @@ fun LocationSearchBar(
                             if (!_locationPermission.allPermissionsGranted)
                                 _locationPermission.launchMultiplePermissionRequest()
                             else {
+                                isSearching = true
+
                                 val currentLocation =
                                     LocationService.getCurrentLocation(context, NominatimApi)
 
@@ -188,7 +201,7 @@ fun LocationSearchBar(
         UploadingPopup(
             offset = IntOffset(startX, startY),
             shape = shape,
-            visible = isSearching.value!!,
+            visible = isSearching,
             modifier = Modifier
                 .padding(top = 4.dp, start = 16.dp, end = 16.dp)
         )
