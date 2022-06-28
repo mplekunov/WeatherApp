@@ -23,7 +23,7 @@ import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 @Composable
 private fun PreviewHourlyTemperatureForecastWidget() {
     HourlyTemperatureForecastWidget(
-        graphSize = Size(40.dp.value, 400.dp.value),
+        graphSize = Size(40.dp.value, 200.dp.value),
         modifier = Modifier.fillMaxWidth(),
         hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )

@@ -2,6 +2,7 @@ package com.application.weatherapp.view.ui.widget
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -68,8 +69,8 @@ fun HourlyPrecipitationForecastWidget(
                     startValue = prevValue,
                     midValue = currentValue,
                     endValue = nextValue,
-                    maxValue = hourlyWeather.maxPrecipitation.value,
-                    minValue = hourlyWeather.minPrecipitation.value,
+                    maxValue = 10F,
+                    minValue = 0F,
                     canvasSize = graphSize
                 )
 
@@ -109,15 +110,15 @@ fun HourlyPrecipitationForecastWidget(
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
 
-                        Box(modifier = Modifier.padding(top = 20.dp)) {
-                            DrawQuadraticCurve(
-                                tripleValuePoint = tripleValuePoint,
-                                canvasSize = graphSize,
-                                graphColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
+                        DrawQuadraticCurve(
+                            modifier = Modifier.offset(y = (-20).dp),
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = graphSize,
+                            graphColor = MaterialTheme.colorScheme.onPrimary
+                        )
 
                         DrawTextInMidOfCurve(
+                            modifier = Modifier.offset(y = (-30).dp),
                             tripleValuePoint = tripleValuePoint,
                             canvasSize = graphSize,
                             fontColor = MaterialTheme.colorScheme.onPrimary
