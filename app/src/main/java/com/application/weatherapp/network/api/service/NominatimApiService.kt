@@ -90,6 +90,8 @@ object NominatimApi : GeocoderApi {
 
     private fun Feature.toLocation(): Location {
         val city = this.locationInfo.address.city
+        val hamlet = this.locationInfo.address.hamlet
+        val locality = this.locationInfo.address.locality
         val state = this.locationInfo.address.state
         val country = this.locationInfo.address.country
 
@@ -98,7 +100,11 @@ object NominatimApi : GeocoderApi {
 
         val location = Location(latitude, longitude)
 
-        location.city = city ?: ""
+        location.city = if (city.isNullOrEmpty() && locality.isNullOrEmpty() && hamlet.isNullOrEmpty()) ""
+        else if (locality.isNullOrEmpty() && hamlet.isNullOrEmpty()) city!!
+        else if (locality.isNullOrEmpty()) hamlet!!
+        else locality
+
         location.state = state ?: ""
         location.country = country ?: ""
 
