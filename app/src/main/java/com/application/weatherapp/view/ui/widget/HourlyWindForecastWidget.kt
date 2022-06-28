@@ -58,7 +58,7 @@ fun HourlyWindForecastWidget(
             )
 
             Text(
-                text = "kph",
+                text = hourlyWeather.weatherForecast.first().wind.speed.unit.unit,
                 fontSize = 16.sp,
                 modifier = Modifier
                     .align(Alignment.Bottom)

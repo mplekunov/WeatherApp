@@ -1,7 +1,6 @@
 package com.application.weatherapp.model.weather
 
-import com.application.weatherapp.model.Temperature
-import com.application.weatherapp.model.TemperatureUnit
+import com.application.weatherapp.model.weather.statistics.Temperature
 import com.application.weatherapp.model.weather.statistics.*
 import kotlin.streams.toList
 

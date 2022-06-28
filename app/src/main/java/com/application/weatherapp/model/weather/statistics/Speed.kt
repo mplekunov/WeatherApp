@@ -5,8 +5,9 @@ class Speed(
     val unit: SpeedUnit
 )
 
-enum class SpeedUnit {
-    KILOMETERS_PER_HOUR,
-    METERS_PER_HOUR,
-    METERS_PER_SECOND
+enum class SpeedUnit(val unit: String) {
+    KILOMETERS_PER_HOUR("km/h"),
+    METERS_PER_HOUR("m/h"),
+    METERS_PER_SECOND("m/s"),
+    NONE("N/A")
 }

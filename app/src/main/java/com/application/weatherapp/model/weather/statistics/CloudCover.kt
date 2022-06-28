@@ -5,6 +5,7 @@ data class CloudCover(
     val unit: CloudCoverUnit
 )
 
-enum class CloudCoverUnit {
-    PERCENTAGE,
+enum class CloudCoverUnit(val unit:String) {
+    PERCENTAGE("%"),
+    NONE("N/A"),
 }

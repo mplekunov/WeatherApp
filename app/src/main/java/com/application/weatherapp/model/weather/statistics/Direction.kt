@@ -6,7 +6,8 @@ class Direction(
 )
 
 enum class DirectionUnit {
-    DEGREES
+    DEGREES,
+    NONE
 }
 
 //override fun toString(): String {

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DrawQuadraticCurve(
+    modifier: Modifier = Modifier,
     tripleValuePoint: TripleValuePoint,
     canvasSize: Size,
     graphColor: Color,
@@ -28,7 +29,7 @@ fun DrawQuadraticCurve(
         )
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .size(canvasSize.width.dp, canvasSize.height.dp)
     ) {
         drawPath(
@@ -78,9 +79,6 @@ private fun getQuadraticCurvePath(
 
     val endPointX = LocalDensity.current.run { tripleValuePoint.endPoint.x.dp.toPx() }
     val endPointY = LocalDensity.current.run { tripleValuePoint.endPoint.y.dp.toPx() }
-
-//    val canvasWidth = LocalDensity.current.run { canvasSize.width.dp.toPx() }
-//    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
 
     return when (isFilled) {
         true -> Path().apply {
@@ -300,6 +298,7 @@ fun DrawLineInMiddleOfCurve(
 
 @Composable
 fun DrawTextInMidOfCurve(
+    modifier: Modifier = Modifier,
     tripleValuePoint: TripleValuePoint,
     canvasSize: Size,
     fontColor: Color
@@ -322,7 +321,7 @@ fun DrawTextInMidOfCurve(
     val midY = pos[1]
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .size(canvasSize.width.dp, canvasSize.height.dp)
     ) {
         drawContext.canvas.nativeCanvas.apply {
