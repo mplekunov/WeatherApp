@@ -5,6 +5,7 @@ data class Precipitation(
     val unit: PrecipitationUnit
 )
 
-enum class PrecipitationUnit {
-    MILLIMETER
+enum class PrecipitationUnit(val unit: String) {
+    MILLIMETER("mm"),
+    NONE("N/A")
 }

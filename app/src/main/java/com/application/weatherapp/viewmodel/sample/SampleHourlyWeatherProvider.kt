@@ -1,8 +1,8 @@
 package com.application.weatherapp.viewmodel.sample
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.application.weatherapp.model.Temperature
-import com.application.weatherapp.model.TemperatureUnit
+import com.application.weatherapp.model.weather.statistics.Temperature
+import com.application.weatherapp.model.weather.statistics.TemperatureUnit
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.model.weather.Weather
 import com.application.weatherapp.model.weather.WeatherType

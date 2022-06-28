@@ -5,6 +5,7 @@ data class Humidity(
     val unit: HumidityUnit
 )
 
-enum class HumidityUnit {
-    PERCENTAGE
+enum class HumidityUnit(val unit: String) {
+    PERCENTAGE("%"),
+    NONE("N/A")
 }

@@ -5,7 +5,8 @@ data class Pressure(
     val unit: PressureUnit,
 )
 
-enum class PressureUnit {
-    MILLI_BAR,
-    HECTOPASCAL
+enum class PressureUnit(val unit: String) {
+    MILLI_BAR("mBar"),
+    HECTOPASCAL("hPa"),
+    NONE("N/A")
 }

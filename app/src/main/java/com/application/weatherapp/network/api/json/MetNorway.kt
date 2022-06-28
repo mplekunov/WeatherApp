@@ -7,7 +7,24 @@ data class MetNorwayResponse(
 )
 
 data class WeatherForecast(
-    @Json(name = "timeseries") val hourlyForecast: List<Weather>
+    @Json(name = "timeseries") val hourlyForecast: List<Weather>,
+    @Json(name = "meta") val metData: MetData
+)
+
+data class MetData(
+    @Json(name = "units") val metUnits: MetUnit
+)
+
+data class MetUnit(
+    @Json(name = "air_pressure_at_sea_level") val pressureUnit: String,
+    @Json(name = "air_temperature") val temperatureUnit: String,
+    @Json(name = "cloud_area_fraction") val cloudCoverUnit: String,
+    @Json(name = "dew_point_temperature") val dewPointUnit: String,
+    @Json(name = "fog_area_fraction") val fogUnit: String,
+    @Json(name = "precipitation_amount") val precipitationUnit: String,
+    @Json(name = "wind_from_direction") val windDirectionUnit: String,
+    @Json(name = "wind_speed") val windSpeedUnit: String,
+    @Json(name = "relative_humidity") val humidityUnit: String
 )
 
 data class Weather(

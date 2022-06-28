@@ -31,7 +31,10 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = String.format("%.1f", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value) + "%",
+                text = String.format(
+                    "%.1f",
+                    dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value
+                ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.unit?.unit}",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 40.dp)
             )
@@ -44,7 +47,10 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = String.format("%.1f", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value) + "%",
+                text = String.format(
+                    "%.1f",
+                    dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value
+                ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.unit?.unit}",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 57.dp)
             )
@@ -57,7 +63,10 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = String.format("%.2f mBar", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value),
+                text = String.format(
+                    "%.2f",
+                    dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value
+                ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.unit?.unit}",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 63.dp)
             )
@@ -70,7 +79,10 @@ fun CurrentWeatherExtendedInfoWidget(
             )
 
             Text(
-                text = String.format("%.1f C", dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value),
+                text = String.format(
+                    "%.1f",
+                    dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value
+                ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.unit?.unit}",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 51.dp)
             )

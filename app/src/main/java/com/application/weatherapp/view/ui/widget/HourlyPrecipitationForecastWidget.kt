@@ -86,7 +86,7 @@ fun HourlyPrecipitationForecastWidget(
                         Canvas(modifier = Modifier.padding(top = 4.dp)) {
                             drawContext.canvas.nativeCanvas.apply {
                                 drawText(
-                                    "In mm",
+                                    "In ${hourlyWeather.weatherForecast.first().precipitation.unit.unit}",
                                     0F.dp.toPx(),
                                     graphSize.height.dp.toPx(),
                                     Paint().apply {

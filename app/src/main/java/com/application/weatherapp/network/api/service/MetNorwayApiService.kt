@@ -1,7 +1,7 @@
 package com.application.weatherapp.network.api.service
 
-import com.application.weatherapp.model.Temperature
-import com.application.weatherapp.model.TemperatureUnit
+import com.application.weatherapp.model.weather.statistics.Temperature
+import com.application.weatherapp.model.weather.statistics.TemperatureUnit
 import com.application.weatherapp.model.formatter.TimeFormatter
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.model.weather.Weather
@@ -42,7 +42,17 @@ object MetNorwayApi : WeatherApi {
     override suspend fun getHourlyForecast(latitude: Double, longitude: Double): HourlyWeather {
         val response = retrofit.create(MetNorwayApiService::class.java).getForecast(latitude, longitude)
 
+
         val weatherForecast = mutableListOf<Weather>()
+
+        val temperatureUnit = convertTemperatureUnit(response.weatherForecast.metData.metUnits.temperatureUnit)
+        val pressureUnit = convertPressureUnit(response.weatherForecast.metData.metUnits.pressureUnit)
+        val humidityUnit = convertHumidityUnit(response.weatherForecast.metData.metUnits.humidityUnit)
+        val cloudCoverUnit = convertCloudCoverUnit(response.weatherForecast.metData.metUnits.cloudCoverUnit)
+        val dewPointUnit = convertTemperatureUnit(response.weatherForecast.metData.metUnits.dewPointUnit)
+        val precipitationUnit = convertPrecipitationUnit(response.weatherForecast.metData.metUnits.precipitationUnit)
+        val speedUnit = convertSpeedUnit(response.weatherForecast.metData.metUnits.windSpeedUnit)
+        val windDirectionUnit = convertDirectionUnit(response.weatherForecast.metData.metUnits.windDirectionUnit)
 
         // First 24 hours from the current time
         for (i in 0 until 24) {
@@ -52,17 +62,40 @@ object MetNorwayApi : WeatherApi {
             val dateTime = TimeFormatter.formatZonedTime(ZonedDateTime.parse(apiWeather.time))
 
             val weather = Weather(
-                currentTemperature = Temperature(apiWeatherDetails.temperature, TemperatureUnit.CELSIUS),
-                pressure = Pressure(apiWeatherDetails.pressure, PressureUnit.HECTOPASCAL),
-                humidity = Humidity(apiWeatherDetails.humidity, HumidityUnit.PERCENTAGE),
-                cloudCover = CloudCover(apiWeatherDetails.cloudCover, CloudCoverUnit.PERCENTAGE),
-                dewPoint = DewPoint(Temperature(apiWeatherDetails.dewPoint, TemperatureUnit.CELSIUS)),
-                precipitation = Precipitation(apiWeather.forecast.nextHour?.precipitation?.value ?: 0F, PrecipitationUnit.MILLIMETER),
-                wind = Wind(
-                    Speed(apiWeatherDetails.windSpeed, SpeedUnit.METERS_PER_SECOND),
-                    Direction(apiWeatherDetails.windDirection, DirectionUnit.DEGREES)
+                currentTemperature = Temperature(
+                    apiWeatherDetails.temperature,
+                    temperatureUnit
                 ),
-                feelingTemperature = Temperature(apiWeatherDetails.temperature, TemperatureUnit.CELSIUS),
+                pressure = Pressure(
+                    apiWeatherDetails.pressure,
+                    pressureUnit
+                ),
+                humidity = Humidity(
+                    apiWeatherDetails.humidity,
+                    humidityUnit
+                ),
+                cloudCover = CloudCover(
+                    apiWeatherDetails.cloudCover,
+                    cloudCoverUnit
+                ),
+                dewPoint = DewPoint(
+                    Temperature(
+                        apiWeatherDetails.dewPoint,
+                        dewPointUnit
+                    )
+                ),
+                precipitation = Precipitation(
+                    apiWeather.forecast.nextHour?.precipitation?.value ?: 0F,
+                    precipitationUnit
+                ),
+                wind = Wind(
+                    Speed(apiWeatherDetails.windSpeed, speedUnit),
+                    Direction(apiWeatherDetails.windDirection, windDirectionUnit)
+                ),
+                feelingTemperature = Temperature(
+                    apiWeatherDetails.temperature,
+                    temperatureUnit
+                ),
                 date = dateTime,
                 weatherType = convertWeatherType(apiWeather.forecast.nextHour?.weatherType?.type ?: "")
             )
@@ -71,6 +104,57 @@ object MetNorwayApi : WeatherApi {
         }
 
         return HourlyWeather(weatherForecast)
+    }
+
+    private fun convertTemperatureUnit(temperatureUnit: String): TemperatureUnit {
+        return when(temperatureUnit) {
+            "celsius" -> TemperatureUnit.CELSIUS
+            "kelvin" -> TemperatureUnit.KELVIN
+            "fahrenheit" -> TemperatureUnit.FAHRENHEIT
+            else -> TemperatureUnit.NONE
+        }
+    }
+
+    private fun convertPressureUnit(pressureUnit: String): PressureUnit {
+        return when(pressureUnit) {
+            "hPa" -> PressureUnit.HECTOPASCAL
+            else -> PressureUnit.NONE
+        }
+    }
+
+    private fun convertHumidityUnit(humidityUnit: String): HumidityUnit {
+        return when(humidityUnit) {
+            "%" -> HumidityUnit.PERCENTAGE
+            else -> HumidityUnit.NONE
+        }
+    }
+
+    private fun convertCloudCoverUnit(cloudCoverUnit: String): CloudCoverUnit {
+        return when(cloudCoverUnit) {
+            "%" -> CloudCoverUnit.PERCENTAGE
+            else -> CloudCoverUnit.NONE
+        }
+    }
+
+    private fun convertPrecipitationUnit(precipitationUnit: String): PrecipitationUnit {
+        return when(precipitationUnit) {
+            "mm" -> PrecipitationUnit.MILLIMETER
+            else -> PrecipitationUnit.NONE
+        }
+    }
+
+    private fun convertSpeedUnit(speedUnit: String): SpeedUnit {
+        return when(speedUnit) {
+            "m/s" -> SpeedUnit.METERS_PER_SECOND
+            else -> SpeedUnit.NONE
+        }
+    }
+
+    private fun convertDirectionUnit(directionUnit: String): DirectionUnit {
+        return when(directionUnit) {
+            "degrees" -> DirectionUnit.DEGREES
+            else -> DirectionUnit.NONE
+        }
     }
 
     private fun convertWeatherType(weatherType: String): WeatherType {
