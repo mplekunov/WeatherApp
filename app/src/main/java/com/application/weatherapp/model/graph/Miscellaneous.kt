@@ -1,7 +1,8 @@
 package com.application.weatherapp.model.graph
 
 import androidx.compose.ui.geometry.Size
-import kotlin.math.min
+import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 
 fun calculateYCoordinate(
     maxValue: Float,
@@ -9,8 +10,9 @@ fun calculateYCoordinate(
     currentValue: Float,
     canvasHeight: Float
 ): Float {
-    val step = canvasHeight / maxValue
-    return canvasHeight - (currentValue - minValue) * step
+    val step = canvasHeight / (abs(maxValue) + abs(minValue))
+
+    return canvasHeight - currentValue * step
 }
 
 fun getTupleValuePoint(
@@ -21,11 +23,11 @@ fun getTupleValuePoint(
     maxValue: Float,
     canvasSize: Size
 ) : TupleValuePoint {
-    val startX = 0F
-    val endX = startX + canvasSize.width
+    val startX = 0.dp
+    val endX = startX + canvasSize.width.dp
 
     val startPoint = ValuePoint(
-        x = 0F,
+        x = 0.dp.value,
         y = calculateYCoordinate(
             maxValue,
             minValue,
@@ -36,7 +38,7 @@ fun getTupleValuePoint(
     )
 
     val endPoint = ValuePoint(
-        x = endX,
+        x = endX.value,
         y = calculateYCoordinate(
             maxValue,
             minValue,
@@ -57,8 +59,8 @@ fun convertToQuadraticConnectionPoints(
     maxValue: Float,
     canvasSize: Size
 ) : TripleValuePoint {
-    val startX = 0F
-    val endX = startX + canvasSize.width
+    val startX = 0.dp
+    val endX = startX + canvasSize.width.dp
     val midX = (endX + startX) / 2
 
     val tupleValuePoint = getTupleValuePoint(
@@ -71,7 +73,7 @@ fun convertToQuadraticConnectionPoints(
     )
 
     val controlPoint = ValuePoint(
-        x = midX,
+        x = midX.value,
         y = calculateYCoordinate(
             maxValue,
             minValue,

@@ -1,18 +1,24 @@
 package com.application.weatherapp.view.ui.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.application.weatherapp.view.ui.LocationSearchBar
 import com.application.weatherapp.view.ui.widget.*
@@ -29,6 +35,15 @@ fun HomeScreen(
 
     val focusRequester = remember { FocusRequester() }
 
+    val density = LocalDensity.current
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
+    var overviewWidgetHeight by remember { mutableStateOf(0.dp) }
+    var temperatureWidgetHeight by remember { mutableStateOf(0.dp) }
+
+    val spacerHeight = screenHeight - overviewWidgetHeight - temperatureWidgetHeight - with(density) { 20f.toDp() }
+
     val widgetModifier = Modifier
         .padding(
             start = 16.dp,
@@ -38,7 +53,6 @@ fun HomeScreen(
         )
         .fillMaxWidth()
 
-
     val spacerModifier = Modifier
         .padding(top = 16.dp)
         .fillMaxWidth()
@@ -46,6 +60,7 @@ fun HomeScreen(
         .height(1.dp)
 
     Surface(modifier = Modifier
+        .fillMaxSize()
         .clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() }
@@ -59,6 +74,9 @@ fun HomeScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .onGloballyPositioned {
+                        overviewWidgetHeight = with(density) { it.size.height.toDp() }
+                    }
             ) {
                 LocationSearchBar(
                     modifier = Modifier
@@ -74,8 +92,18 @@ fun HomeScreen(
                 )
             }
 
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(spacerHeight)
+                    .background(Color.Transparent)
+            )
+
             HourlyTemperatureForecastWidget(
-                modifier = widgetModifier.padding(top = 350.dp),
+                modifier = widgetModifier
+                    .onGloballyPositioned {
+                        temperatureWidgetHeight = with(density) { it.size.height.toDp() }
+                    },
                 graphSize = Size(60F, 200F),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )

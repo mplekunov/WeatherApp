@@ -261,55 +261,45 @@ private fun QueryResultPopup(
                 color = Color.DarkGray,
                 shape = shape
             ) {
-                QueryResultItem(
-                    modifier = modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    locations = locations
-                )
-            }
-        }
-    }
-}
+                Column {
+                    for (i in locations.indices) {
+                        LocationText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    Timer().schedule(
+                                        timerTask {
+                                            _weatherViewModel.downloadWeatherData(
+                                                locations[i],
+                                                MetNorwayApi
+                                            )
+                                        }, 500
+                                    )
 
-@Composable
-private fun QueryResultItem(
-    modifier: Modifier = Modifier,
-    locations: List<Location>
-) {
-    Column {
-        for (i in locations.indices) {
-            LocationText(
-                modifier = modifier
-                    .clickable {
-                        Timer().schedule(
-                            timerTask {
-                                _weatherViewModel.downloadWeatherData(
-                                    locations[i],
-                                    MetNorwayApi
-                                )
-                            }, 500
+                                    _locationViewModel.setCurrentLocation(locations[i])
+                                    _focusManager.clearFocus()
+                                }
+                                .padding(8.dp),
+
+                            location = locations[i]
                         )
 
-                        _locationViewModel.setCurrentLocation(locations[i])
-                        _focusManager.clearFocus()
-                    },
-                location = locations[i]
-            )
-
-            if (i != locations.lastIndex) {
-                Spacer(
-                    modifier = Modifier
-                        .padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 8.dp,
-                            end = 8.dp
-                        )
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Color.Gray)
-                )
+                        if (i != locations.lastIndex) {
+                            Spacer(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 4.dp,
+                                        bottom = 4.dp,
+                                        start = 8.dp,
+                                        end = 8.dp
+                                    )
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                                    .background(Color.Gray)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
