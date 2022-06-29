@@ -16,6 +16,8 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.application.weatherapp.R
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun DrawQuadraticCurve(
@@ -302,6 +304,7 @@ fun DrawLineInMiddleOfCurve(
 @Composable
 fun DrawTextInMidOfCurve(
     modifier: Modifier = Modifier,
+    text: String,
     tripleValuePoint: TripleValuePoint,
     canvasSize: Size,
     fontColor: Color
@@ -329,7 +332,7 @@ fun DrawTextInMidOfCurve(
     ) {
         drawContext.canvas.nativeCanvas.apply {
             drawText(
-                String.format("%.1f", controlPoint.value),
+                text,
                 controlPointX,
                 midY,
                 android.graphics.Paint().apply {

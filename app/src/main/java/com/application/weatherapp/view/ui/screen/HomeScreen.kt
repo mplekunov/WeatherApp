@@ -132,6 +132,14 @@ fun HomeScreen(
             )
 
             Spacer(modifier = spacerModifier)
+
+            HourlyCloudCoverForecastWidget(
+                modifier = widgetModifier,
+                graphSize = Size(60F, 100F),
+                hourlyWeather = dailyWeather.value!!.hourlyWeather
+            )
+
+            Spacer(modifier = spacerModifier)
         }
     }
 }
