@@ -21,6 +21,7 @@ class SampleHourlyWeatherProvider : PreviewParameterProvider<HourlyWeather> {
     private val dewPointRand get() = Random.nextDouble(5.0, 30.0).toFloat()
     private val precipitationRand get() = Random.nextDouble(0.0, 5.0).toFloat()
     private val windRand get() = Random.nextDouble(0.0, 20.0).toFloat()
+    private val ultraVioletIndex get() = Random.nextDouble(0.0, 12.0).toFloat()
     private val weatherType
         get() = WeatherType.values()[Random.nextInt(
             0,
@@ -59,6 +60,7 @@ class SampleHourlyWeatherProvider : PreviewParameterProvider<HourlyWeather> {
                         Speed(windRand, SpeedUnit.KILOMETERS_PER_HOUR),
                         Direction(Float.MAX_VALUE, DirectionUnit.DEGREES)
                     ),
+                    ultraVioletIndex = ultraVioletIndex,
                     weatherType = weatherType
                 )
             )
