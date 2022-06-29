@@ -4,17 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.application.weatherapp.R
 import com.application.weatherapp.model.graph.DrawQuadraticCurve
 import com.application.weatherapp.model.graph.DrawTextInMidOfCurve
 import com.application.weatherapp.model.graph.convertToQuadraticConnectionPoints
@@ -74,12 +78,13 @@ fun HourlyWindForecastWidget(
                     .width(2.dp)
             )
 
-//            Text(
-//                text = hourlyWeather.weatherForecast.first().wind.direction.toString(),
-//                fontSize = 16.sp,
-//                modifier = Modifier
-//                    .align(Alignment.CenterVertically)
-//            )
+            DirectionIcon(
+                modifier = Modifier
+                    .height(windSpeedFontSize.value.dp)
+                    .align(Alignment.CenterVertically),
+                direction =
+                hourlyWeather.weatherForecast.first().wind.direction.value + 180
+            )
         }
 
         LazyRow(
@@ -109,6 +114,15 @@ fun HourlyWindForecastWidget(
                 )
 
                 Column(modifier = Modifier) {
+                    DirectionIcon(
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .size(graphSize.width.dp / 2),
+                        direction =
+                        hourlyWeather.weatherForecast[index].wind.direction.value + 180
+                    )
+
                     Box {
                         Box(modifier = Modifier.padding(top = 20.dp)) {
                             DrawQuadraticCurve(
@@ -136,4 +150,16 @@ fun HourlyWindForecastWidget(
             }
         }
     }
+}
+
+@Composable
+private fun DirectionIcon(
+    modifier: Modifier = Modifier,
+    direction: Float
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_arrow),
+        contentDescription = "",
+        modifier = modifier.rotate(direction)
+    )
 }
