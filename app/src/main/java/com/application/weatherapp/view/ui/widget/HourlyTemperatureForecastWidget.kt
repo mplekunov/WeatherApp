@@ -18,6 +18,8 @@ import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.view.ui.icon.getWeatherIconPainter
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Preview
 @Composable
@@ -101,6 +103,10 @@ fun HourlyTemperatureForecastWidget(
 
                     DrawTextInMidOfCurve(
                         tripleValuePoint = tripleValuePoint,
+                        text = BigDecimal(currentValue.toString())
+                            .setScale(1, RoundingMode.HALF_UP)
+                            .stripTrailingZeros()
+                            .toPlainString(),
                         canvasSize = graphSize,
                         fontColor = MaterialTheme.colorScheme.onPrimary
                     )

@@ -15,7 +15,8 @@ open class Weather(
     var pressure: Pressure,
     var dewPoint: DewPoint,
     var precipitation: Precipitation,
-    var wind: Wind
+    var wind: Wind,
+    var ultraVioletIndex: Float
     ) {
     val weatherDescription get() = when(weatherType) {
         WeatherType.WINDY -> "Windy"

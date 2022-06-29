@@ -96,6 +96,7 @@ object MetNorwayApi : WeatherApi {
                     apiWeatherDetails.temperature,
                     temperatureUnit
                 ),
+                ultraVioletIndex = apiWeatherDetails.ultravioletIndex ?: 0F,
                 date = dateTime,
                 weatherType = convertWeatherType(apiWeather.forecast.nextHour?.weatherType?.type ?: "")
             )

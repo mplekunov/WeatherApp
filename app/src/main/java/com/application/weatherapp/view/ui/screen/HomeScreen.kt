@@ -117,6 +117,14 @@ fun HomeScreen(
 
             Spacer(modifier = spacerModifier)
 
+            HourlyCloudCoverForecastWidget(
+                modifier = widgetModifier,
+                graphSize = Size(60F, 100F),
+                hourlyWeather = dailyWeather.value!!.hourlyWeather
+            )
+
+            Spacer(modifier = spacerModifier)
+
             HourlyPrecipitationForecastWidget(
                 modifier = widgetModifier,
                 graphSize = Size(50F, 100F),
@@ -126,6 +134,14 @@ fun HomeScreen(
             Spacer(modifier = spacerModifier)
 
             HourlyWindForecastWidget(
+                modifier = widgetModifier,
+                graphSize = Size(60F, 100F),
+                hourlyWeather = dailyWeather.value!!.hourlyWeather
+            )
+
+            Spacer(modifier = spacerModifier)
+
+            HourlyUltraVioletIndexForecastWidget(
                 modifier = widgetModifier,
                 graphSize = Size(60F, 100F),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather

@@ -8,7 +8,7 @@ class NetworkInterceptor : Interceptor {
         return chain.proceed(
             chain.request()
                 .newBuilder()
-                .header("User-Agent", "Weather App")
+                .header("User-Agent", "Weather")
                 .build()
         )
     }

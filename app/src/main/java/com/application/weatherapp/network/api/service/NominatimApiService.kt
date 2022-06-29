@@ -13,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
 private val BASE_URL = "https://nominatim.openstreetmap.org/"
@@ -25,6 +26,7 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .client(
         OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
             .addNetworkInterceptor(NetworkInterceptor())
             .build()
     )
@@ -71,7 +73,7 @@ object NominatimApi : GeocoderApi {
     }
 
     override suspend fun getLocation(latitude: Double, longitude: Double): Location {
-        delay(QUERY_DELAY   )
+        delay(QUERY_DELAY)
 
         val response = retrofit.create(NominatimApiService::class.java).getLocation(latitude, longitude)
 

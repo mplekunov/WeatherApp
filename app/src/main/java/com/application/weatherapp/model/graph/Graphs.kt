@@ -12,7 +12,12 @@ import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.application.weatherapp.R
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun DrawQuadraticCurve(
@@ -62,6 +67,81 @@ fun DrawQuadraticCurve(
             brush = graphBrush,
             style = graphStyle
         )
+    }
+}
+
+@Composable
+fun DrawCubicCurve(
+    modifier: Modifier = Modifier,
+    tripleValuePoint: TripleValuePoint,
+    canvasSize: Size,
+    graphColor: Color,
+    graphStyle: DrawStyle = Stroke(4F)
+) {
+    val graphPath =
+        getCubicCurvePath(
+            tripleValuePoint = tripleValuePoint,
+            canvasSize = canvasSize
+        )
+
+    Canvas(
+        modifier = modifier
+            .size(canvasSize.width.dp, canvasSize.height.dp)
+    ) {
+        drawPath(
+            path = graphPath,
+            color = graphColor,
+            style = graphStyle
+        )
+    }
+}
+
+@Composable
+private fun getCubicCurvePath(
+    tripleValuePoint: TripleValuePoint,
+    canvasSize: Size,
+    isFilled: Boolean = false
+): Path {
+    val startPointX = LocalDensity.current.run { tripleValuePoint.startPoint.x.dp.toPx() }
+    val startPointY = LocalDensity.current.run { tripleValuePoint.startPoint.y.dp.toPx() }
+
+    val midPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
+    val midPointY = LocalDensity.current.run { tripleValuePoint.midPoint.y.dp.toPx() }
+
+    val endPointX = LocalDensity.current.run { tripleValuePoint.endPoint.x.dp.toPx() }
+    val endPointY = LocalDensity.current.run { tripleValuePoint.endPoint.y.dp.toPx() }
+
+    val firstControlPointX = (startPointX + midPointX) / 2
+    val firstControlPointY = startPointY
+
+    val secondControlPointX = (midPointX + endPointX) / 2
+    val secondControlPointY = endPointY
+
+    return when (isFilled) {
+        true -> Path().apply {
+            moveTo(startPointX, Float.MAX_VALUE)
+
+            lineTo(startPointX, startPointY)
+
+            cubicTo(
+                firstControlPointX, firstControlPointY,
+                secondControlPointX, secondControlPointY,
+                endPointX, endPointY
+            )
+
+            lineTo(endPointX, Float.MAX_VALUE)
+
+            close()
+        }
+        false -> Path().apply {
+            moveTo(startPointX, startPointY)
+
+            cubicTo(
+                firstControlPointX, firstControlPointY,
+                secondControlPointX, secondControlPointY,
+                endPointX, endPointY
+            )
+        }
     }
 }
 
@@ -299,12 +379,11 @@ fun DrawLineInMiddleOfCurve(
 @Composable
 fun DrawTextInMidOfCurve(
     modifier: Modifier = Modifier,
+    text: String,
     tripleValuePoint: TripleValuePoint,
     canvasSize: Size,
     fontColor: Color
 ) {
-    val controlPoint = tripleValuePoint.midPoint
-
     val controlPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
 
     val graphPath =
@@ -326,7 +405,7 @@ fun DrawTextInMidOfCurve(
     ) {
         drawContext.canvas.nativeCanvas.apply {
             drawText(
-                String.format("%.1f", controlPoint.value),
+                text,
                 controlPointX,
                 midY,
                 android.graphics.Paint().apply {

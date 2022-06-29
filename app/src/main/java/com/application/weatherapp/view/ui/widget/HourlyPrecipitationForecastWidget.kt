@@ -2,7 +2,6 @@ package com.application.weatherapp.view.ui.widget
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Preview
 @Composable
@@ -119,6 +120,10 @@ fun HourlyPrecipitationForecastWidget(
 
                         DrawTextInMidOfCurve(
                             modifier = Modifier.offset(y = (-30).dp),
+                            text = BigDecimal(currentValue.toString())
+                                .setScale(1, RoundingMode.HALF_UP)
+                                .stripTrailingZeros()
+                                .toPlainString(),
                             tripleValuePoint = tripleValuePoint,
                             canvasSize = graphSize,
                             fontColor = MaterialTheme.colorScheme.onPrimary

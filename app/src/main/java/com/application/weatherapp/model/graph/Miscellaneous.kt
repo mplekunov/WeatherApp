@@ -10,9 +10,11 @@ fun calculateYCoordinate(
     currentValue: Float,
     canvasHeight: Float
 ): Float {
+    val current = if (currentValue > maxValue) maxValue else currentValue
+
     val step = canvasHeight / (abs(maxValue) + abs(minValue))
 
-    return canvasHeight - currentValue * step
+    return canvasHeight - current * step
 }
 
 fun getTupleValuePoint(

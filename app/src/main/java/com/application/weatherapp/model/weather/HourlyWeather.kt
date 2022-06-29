@@ -14,6 +14,7 @@ data class HourlyWeather(
     private val dewPointCollection get() = weatherForecast.stream().map { it.dewPoint.temperature.value }.toList()
     private val precipitationCollection get() = weatherForecast.stream().map { it.precipitation.value }.toList()
     private val windCollection get() = weatherForecast.stream().map { it.wind.speed.value }.toList()
+    private val ultraVioletIndexCollection get() = weatherForecast.stream().map { it.ultraVioletIndex }.toList()
 
     val maxTemperature get() =
         Temperature(temperatureCollection.maxOrNull() ?: 0F, weatherForecast.first().currentTemperature.unit)
@@ -60,4 +61,7 @@ data class HourlyWeather(
         Wind(Speed(windCollection.minOrNull() ?: 0F, weatherForecast.first().wind.speed.unit),
             Direction(Float.MAX_VALUE, DirectionUnit.DEGREES)
         )
+
+    val maxUltraVioletIndex get() = ultraVioletIndexCollection.maxOrNull() ?: 0F
+    val minUltraVioletIndex get() = ultraVioletIndexCollection.minOrNull() ?: 0F
 }
