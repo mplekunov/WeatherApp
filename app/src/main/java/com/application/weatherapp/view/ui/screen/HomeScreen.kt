@@ -124,7 +124,7 @@ fun HomeScreen(
 
             HourlyUltraVioletIndexForecastWidget(
                 modifier = widgetModifier,
-                graphSize = DpSize(55.dp, 100.dp),
+                graphSize = DpSize(55.dp, 150.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -132,7 +132,7 @@ fun HomeScreen(
 
             HourlyCloudCoverForecastWidget(
                 modifier = widgetModifier,
-                graphSize = DpSize(55.dp, 100.dp),
+                graphSize = DpSize(55.dp, 150.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -140,7 +140,7 @@ fun HomeScreen(
 
             HourlyPrecipitationForecastWidget(
                 modifier = widgetModifier,
-                graphSize = DpSize(55.dp, 100.dp),
+                graphSize = DpSize(55.dp, 150.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -148,7 +148,7 @@ fun HomeScreen(
 
             HourlyWindForecastWidget(
                 modifier = widgetModifier,
-                graphSize = DpSize(55.dp, 100.dp),
+                graphSize = DpSize(55.dp, 150.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 

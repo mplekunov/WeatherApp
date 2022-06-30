@@ -134,30 +134,32 @@ fun HourlyPrecipitationForecastWidget(
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
 
-                        DrawTextInMidOfCurve(
-                            modifier = Modifier.offset(y = (-20).dp),
-                            text = BigDecimal(currentValue.toString())
-                                .setScale(1, RoundingMode.HALF_UP)
-                                .stripTrailingZeros()
-                                .toPlainString(),
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            fontColor = MaterialTheme.colorScheme.onPrimary,
-                            fontSize = fontSize
-                        )
+                        Box(modifier = Modifier.offset(y = (-20).dp)) {
+                            DrawTextInMidOfCurve(
+                                modifier = Modifier.offset(y = (-20).dp),
+                                text = BigDecimal(currentValue.toString())
+                                    .setScale(1, RoundingMode.HALF_UP)
+                                    .stripTrailingZeros()
+                                    .toPlainString(),
+                                tripleValuePoint = tripleValuePoint,
+                                canvasSize = graphSize,
+                                fontColor = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = fontSize
+                            )
 
-                        DrawQuadraticCurve(
-                            modifier = Modifier,
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            graphColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                            DrawQuadraticCurve(
+                                modifier = Modifier,
+                                tripleValuePoint = tripleValuePoint,
+                                canvasSize = graphSize,
+                                graphColor = MaterialTheme.colorScheme.onPrimary
+                            )
 
-                        DrawCurveSideBorders(
-                            tupleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            borderBrush = brush
-                        )
+                            DrawCurveSideBorders(
+                                tupleValuePoint = tripleValuePoint,
+                                canvasSize = graphSize,
+                                borderBrush = brush
+                            )
+                        }
                     }
 
                     Text(
