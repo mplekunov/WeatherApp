@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
@@ -25,7 +26,7 @@ import java.math.RoundingMode
 @Composable
 private fun PreviewHourlyTemperatureForecastWidget() {
     HourlyTemperatureForecastWidget(
-        graphSize = Size(40.dp.value, 200.dp.value),
+        graphSize = DpSize(90.dp, 200.dp),
         modifier = Modifier.fillMaxWidth(),
         hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
@@ -34,9 +35,11 @@ private fun PreviewHourlyTemperatureForecastWidget() {
 @Composable
 fun HourlyTemperatureForecastWidget(
     modifier: Modifier = Modifier,
-    graphSize: Size,
+    graphSize: DpSize,
     hourlyWeather: HourlyWeather
 ) {
+    val fontSize = (graphSize.width.value / 5).sp
+
     LazyRow(
         modifier = modifier
     ) {
@@ -71,44 +74,45 @@ fun HourlyTemperatureForecastWidget(
                         MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
                         MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.4f),
                         MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
-                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0f),
+                        Color.Transparent,
                     )
                 )
 
             Column(modifier = Modifier) {
                 Box {
-                    Box(modifier = Modifier.padding(top = 20.dp)) {
-                        DrawQuadraticCurve(
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            graphColor = MaterialTheme.colorScheme.onPrimary
-                        )
-
-                        DrawCurveSideBorders(
-                            tupleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            borderBrush = brush
-                        )
-
-                        DrawLineInMiddleOfCurve(
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            midLineBrush = brush,
-                            midLinePathEffect = PathEffect.dashPathEffect(
-                                floatArrayOf(2f, 10f),
-                                20f
-                            )
-                        )
-                    }
 
                     DrawTextInMidOfCurve(
+                        modifier = Modifier.offset(y = (-20).dp),
                         tripleValuePoint = tripleValuePoint,
                         text = BigDecimal(currentValue.toString())
                             .setScale(1, RoundingMode.HALF_UP)
                             .stripTrailingZeros()
                             .toPlainString(),
                         canvasSize = graphSize,
-                        fontColor = MaterialTheme.colorScheme.onPrimary
+                        fontColor = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = fontSize
+                    )
+
+                    DrawQuadraticCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = graphSize,
+                        graphColor = MaterialTheme.colorScheme.onPrimary
+                    )
+
+                    DrawCurveSideBorders(
+                        tupleValuePoint = tripleValuePoint,
+                        canvasSize = graphSize,
+                        borderBrush = brush
+                    )
+
+                    DrawLineInMiddleOfCurve(
+                        tripleValuePoint = tripleValuePoint,
+                        canvasSize = graphSize,
+                        midLineBrush = brush,
+                        midLinePathEffect = PathEffect.dashPathEffect(
+                            floatArrayOf(2f, 10f),
+                            20f
+                        )
                     )
                 }
 
@@ -122,7 +126,7 @@ fun HourlyTemperatureForecastWidget(
 
                 Text(
                     text = "${weather.date.hour}",
-                    fontSize = 14.sp,
+                    fontSize = fontSize,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
