@@ -52,7 +52,7 @@ fun HourlyPrecipitationForecastWidget(
         Text(
             text = "Precipitation",
             style = Typography.titleMedium,
-            modifier = Modifier.padding(bottom = 40.dp)
+            modifier = Modifier.padding(bottom = 60.dp)
         )
 
         LazyRow(

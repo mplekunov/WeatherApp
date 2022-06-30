@@ -254,7 +254,7 @@ private fun QueryResultPopup(
         ) {
             Surface(
                 modifier = modifier,
-                color = Color.DarkGray,
+                color = MaterialTheme.colorScheme.secondary,
                 shape = shape
             ) {
                 Column {
