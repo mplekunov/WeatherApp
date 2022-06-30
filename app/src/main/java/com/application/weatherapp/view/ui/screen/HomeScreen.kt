@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.application.weatherapp.view.ui.LocationSearchBar
 import com.application.weatherapp.view.ui.widget.*
@@ -104,7 +105,7 @@ fun HomeScreen(
                     .onGloballyPositioned {
                         temperatureWidgetHeight = with(density) { it.size.height.toDp() }
                     },
-                graphSize = Size(60F, 200F),
+                graphSize = DpSize(55.dp, 450.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -117,9 +118,17 @@ fun HomeScreen(
 
             Spacer(modifier = spacerModifier)
 
+            HourlyUltraVioletIndexForecastWidget(
+                modifier = widgetModifier,
+                graphSize = DpSize(55.dp, 100.dp),
+                hourlyWeather = dailyWeather.value!!.hourlyWeather
+            )
+
+            Spacer(modifier = spacerModifier)
+
             HourlyCloudCoverForecastWidget(
                 modifier = widgetModifier,
-                graphSize = Size(60F, 100F),
+                graphSize = DpSize(55.dp, 100.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -127,7 +136,7 @@ fun HomeScreen(
 
             HourlyPrecipitationForecastWidget(
                 modifier = widgetModifier,
-                graphSize = Size(50F, 100F),
+                graphSize = DpSize(55.dp, 100.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 
@@ -135,15 +144,7 @@ fun HomeScreen(
 
             HourlyWindForecastWidget(
                 modifier = widgetModifier,
-                graphSize = Size(60F, 100F),
-                hourlyWeather = dailyWeather.value!!.hourlyWeather
-            )
-
-            Spacer(modifier = spacerModifier)
-
-            HourlyUltraVioletIndexForecastWidget(
-                modifier = widgetModifier,
-                graphSize = Size(60F, 100F),
+                graphSize = DpSize(55.dp, 100.dp),
                 hourlyWeather = dailyWeather.value!!.hourlyWeather
             )
 

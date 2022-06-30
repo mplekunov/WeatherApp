@@ -12,18 +12,16 @@ import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.application.weatherapp.R
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 @Composable
 fun DrawQuadraticCurve(
     modifier: Modifier = Modifier,
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     graphColor: Color,
     graphStyle: DrawStyle = Stroke(4F)
 ) {
@@ -35,7 +33,7 @@ fun DrawQuadraticCurve(
 
     Canvas(
         modifier = modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawPath(
             path = graphPath,
@@ -48,7 +46,7 @@ fun DrawQuadraticCurve(
 @Composable
 fun DrawQuadraticCurve(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     graphBrush: Brush,
     graphStyle: DrawStyle = Stroke(4F)
 ) {
@@ -60,7 +58,7 @@ fun DrawQuadraticCurve(
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawPath(
             path = graphPath,
@@ -74,7 +72,7 @@ fun DrawQuadraticCurve(
 fun DrawCubicCurve(
     modifier: Modifier = Modifier,
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     graphColor: Color,
     graphStyle: DrawStyle = Stroke(4F)
 ) {
@@ -86,7 +84,7 @@ fun DrawCubicCurve(
 
     Canvas(
         modifier = modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawPath(
             path = graphPath,
@@ -99,17 +97,18 @@ fun DrawCubicCurve(
 @Composable
 private fun getCubicCurvePath(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     isFilled: Boolean = false
 ): Path {
-    val startPointX = LocalDensity.current.run { tripleValuePoint.startPoint.x.dp.toPx() }
-    val startPointY = LocalDensity.current.run { tripleValuePoint.startPoint.y.dp.toPx() }
+    val startPointX = tripleValuePoint.startPoint.x
+    val startPointY = tripleValuePoint.startPoint.y
 
-    val midPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
-    val midPointY = LocalDensity.current.run { tripleValuePoint.midPoint.y.dp.toPx() }
+    val midPointX = tripleValuePoint.midPoint.x
 
-    val endPointX = LocalDensity.current.run { tripleValuePoint.endPoint.x.dp.toPx() }
-    val endPointY = LocalDensity.current.run { tripleValuePoint.endPoint.y.dp.toPx() }
+    val endPointX = tripleValuePoint.endPoint.x
+    val endPointY = tripleValuePoint.endPoint.y
+
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     val firstControlPointX = (startPointX + midPointX) / 2
     val firstControlPointY = startPointY
@@ -119,7 +118,7 @@ private fun getCubicCurvePath(
 
     return when (isFilled) {
         true -> Path().apply {
-            moveTo(startPointX, Float.MAX_VALUE)
+            moveTo(startPointX, canvasHeight)
 
             lineTo(startPointX, startPointY)
 
@@ -129,7 +128,7 @@ private fun getCubicCurvePath(
                 endPointX, endPointY
             )
 
-            lineTo(endPointX, Float.MAX_VALUE)
+            lineTo(endPointX, canvasHeight)
 
             close()
         }
@@ -148,21 +147,23 @@ private fun getCubicCurvePath(
 @Composable
 private fun getQuadraticCurvePath(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     isFilled: Boolean = false
 ): Path {
-    val startPointX = LocalDensity.current.run { tripleValuePoint.startPoint.x.dp.toPx() }
-    val startPointY = LocalDensity.current.run { tripleValuePoint.startPoint.y.dp.toPx() }
+    val startPointX = tripleValuePoint.startPoint.x
+    val startPointY = tripleValuePoint.startPoint.y
 
-    val controlPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
-    val controlPointY = LocalDensity.current.run { tripleValuePoint.midPoint.y.dp.toPx() }
+    val controlPointX = tripleValuePoint.midPoint.x
+    val controlPointY = tripleValuePoint.midPoint.y
 
-    val endPointX = LocalDensity.current.run { tripleValuePoint.endPoint.x.dp.toPx() }
-    val endPointY = LocalDensity.current.run { tripleValuePoint.endPoint.y.dp.toPx() }
+    val endPointX = tripleValuePoint.endPoint.x
+    val endPointY = tripleValuePoint.endPoint.y
+
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     return when (isFilled) {
         true -> Path().apply {
-            moveTo(startPointX, Float.MAX_VALUE)
+            moveTo(startPointX, canvasHeight)
 
             lineTo(startPointX, startPointY)
 
@@ -171,7 +172,7 @@ private fun getQuadraticCurvePath(
                 endPointX, endPointY
             )
 
-            lineTo(endPointX, Float.MAX_VALUE)
+            lineTo(endPointX, canvasHeight)
 
             close()
         }
@@ -189,7 +190,7 @@ private fun getQuadraticCurvePath(
 @Composable
 fun DrawAreaUnderQuadraticCurve(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     fillBrush: Brush
 ) {
     val filledPath =
@@ -201,7 +202,7 @@ fun DrawAreaUnderQuadraticCurve(
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawPath(
             path = filledPath,
@@ -214,7 +215,7 @@ fun DrawAreaUnderQuadraticCurve(
 @Composable
 fun DrawAreaUnderQuadraticCurve(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     fillColor: Color
 ) {
     val filledPath =
@@ -226,7 +227,7 @@ fun DrawAreaUnderQuadraticCurve(
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawPath(
             path = filledPath,
@@ -239,21 +240,20 @@ fun DrawAreaUnderQuadraticCurve(
 @Composable
 fun DrawCurveSideBorders(
     tupleValuePoint: TupleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     borderColor: Color
 ) {
-    val startPointX = LocalDensity.current.run { tupleValuePoint.startPoint.x.dp.toPx() }
-    val startPointY = LocalDensity.current.run { tupleValuePoint.startPoint.y.dp.toPx() }
+    val startPointX = tupleValuePoint.startPoint.x
+    val startPointY = tupleValuePoint.startPoint.y
 
-    val endPointX = LocalDensity.current.run { tupleValuePoint.endPoint.x.dp.toPx() }
-    val endPointY = LocalDensity.current.run { tupleValuePoint.endPoint.y.dp.toPx() }
+    val endPointX = tupleValuePoint.endPoint.x
+    val endPointY = tupleValuePoint.endPoint.y
 
-//    val canvasWidth = LocalDensity.current.run { canvasSize.width.dp.toPx() }
-    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawLine(
             start = Offset(startPointX, startPointY),
@@ -272,21 +272,20 @@ fun DrawCurveSideBorders(
 @Composable
 fun DrawCurveSideBorders(
     tupleValuePoint: TupleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     borderBrush: Brush
 ) {
-    val startPointX = LocalDensity.current.run { tupleValuePoint.startPoint.x.dp.toPx() }
-    val startPointY = LocalDensity.current.run { tupleValuePoint.startPoint.y.dp.toPx() }
+    val startPointX = tupleValuePoint.startPoint.x
+    val startPointY = tupleValuePoint.startPoint.y
 
-    val endPointX = LocalDensity.current.run { tupleValuePoint.endPoint.x.dp.toPx() }
-    val endPointY = LocalDensity.current.run { tupleValuePoint.endPoint.y.dp.toPx() }
+    val endPointX = tupleValuePoint.endPoint.x
+    val endPointY = tupleValuePoint.endPoint.y
 
-//    val canvasWidth = LocalDensity.current.run { canvasSize.width.dp.toPx() }
-    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawLine(
             start = Offset(startPointX, startPointY),
@@ -305,13 +304,13 @@ fun DrawCurveSideBorders(
 @Composable
 fun DrawLineInMiddleOfCurve(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     midLineBrush: Brush,
     midLinePathEffect: PathEffect? = null
 ) {
-    val controlPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
+    val controlPointX = tripleValuePoint.midPoint.x
 
-    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     val graphPath =
         getQuadraticCurvePath(
@@ -328,7 +327,7 @@ fun DrawLineInMiddleOfCurve(
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawLine(
             start = Offset(controlPointX, midY),
@@ -342,13 +341,13 @@ fun DrawLineInMiddleOfCurve(
 @Composable
 fun DrawLineInMiddleOfCurve(
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     midLineColor: Color,
     midLinePathEffect: PathEffect? = null
 ) {
-    val controlPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
+    val controlPointX = tripleValuePoint.midPoint.x
 
-    val canvasHeight = LocalDensity.current.run { canvasSize.height.dp.toPx() }
+    val canvasHeight = LocalDensity.current.run { canvasSize.height.toPx() }
 
     val graphPath =
         getQuadraticCurvePath(
@@ -365,7 +364,7 @@ fun DrawLineInMiddleOfCurve(
 
     Canvas(
         modifier = Modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawLine(
             start = Offset(controlPointX, midY),
@@ -380,11 +379,12 @@ fun DrawLineInMiddleOfCurve(
 fun DrawTextInMidOfCurve(
     modifier: Modifier = Modifier,
     text: String,
+    fontSize: TextUnit,
     tripleValuePoint: TripleValuePoint,
-    canvasSize: Size,
+    canvasSize: DpSize,
     fontColor: Color
 ) {
-    val controlPointX = LocalDensity.current.run { tripleValuePoint.midPoint.x.dp.toPx() }
+    val controlPointX = tripleValuePoint.midPoint.x
 
     val graphPath =
         getQuadraticCurvePath(
@@ -401,7 +401,7 @@ fun DrawTextInMidOfCurve(
 
     Canvas(
         modifier = modifier
-            .size(canvasSize.width.dp, canvasSize.height.dp)
+            .size(canvasSize.width, canvasSize.height)
     ) {
         drawContext.canvas.nativeCanvas.apply {
             drawText(
@@ -409,7 +409,7 @@ fun DrawTextInMidOfCurve(
                 controlPointX,
                 midY,
                 android.graphics.Paint().apply {
-                    textSize = 34F
+                    textSize = density.run { fontSize.toPx() }
                     textAlign = android.graphics.Paint.Align.CENTER
                     this.color = fontColor.toArgb()
                 }

@@ -13,8 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
@@ -27,7 +30,7 @@ import java.math.RoundingMode
 @Composable
 private fun PreviewHourlyPrecipitationForecastWidget() {
     HourlyPrecipitationForecastWidget(
-        graphSize = Size(40F, 100F),
+        graphSize = DpSize(60.dp, 100.dp),
         modifier = Modifier.fillMaxWidth(),
         hourlyWeather = SampleHourlyWeatherProvider().values.first()
     )
@@ -36,17 +39,20 @@ private fun PreviewHourlyPrecipitationForecastWidget() {
 @Composable
 fun HourlyPrecipitationForecastWidget(
     modifier: Modifier = Modifier,
-    graphSize: Size,
+    graphSize: DpSize,
     hourlyWeather: HourlyWeather
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
+    val fontSize = (graphSize.width.value / 5).sp
+
+    val density = LocalDensity.current
 
     Column(modifier = modifier) {
         Text(
             text = "Precipitation",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(bottom = 40.dp)
         )
 
         LazyRow(
@@ -70,28 +76,45 @@ fun HourlyPrecipitationForecastWidget(
                     startValue = prevValue,
                     midValue = currentValue,
                     endValue = nextValue,
-                    maxValue = 10F,
+                    maxValue = 5F,
                     minValue = 0F,
                     canvasSize = graphSize
                 )
 
+                val colors = listOf(
+                    MaterialTheme.colorScheme.onPrimary,
+                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.4f),
+                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
+                    Color.Transparent
+                )
+
+                val brush = Brush.verticalGradient(
+                    colors = colors
+                )
+
                 if (index == 0) {
-                    Box(modifier = Modifier.padding(end = 50.dp, top = 4.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .size(graphSize.width, graphSize.height)
+                    ) {
                         DrawPrecipitationLevelLabel(
+                            modifier = Modifier.offset(y = (fontSize / 2).value.dp),
                             canvasSize = graphSize,
                             text = listOf("Heavy", "Strong", "Medium", "Light"),
-                            fontSize = 34F,
+                            fontSize = fontSize,
                             fontColor = MaterialTheme.colorScheme.onPrimary
                         )
 
-                        Canvas(modifier = Modifier.padding(top = 4.dp)) {
+                        Canvas(modifier = Modifier) {
                             drawContext.canvas.nativeCanvas.apply {
                                 drawText(
                                     "In ${hourlyWeather.weatherForecast.first().precipitation.unit.unit}",
-                                    0F.dp.toPx(),
-                                    graphSize.height.dp.toPx(),
+                                    0F,
+                                    graphSize.height.toPx(),
                                     Paint().apply {
-                                        textSize = 28F
+                                        textSize = density.run { fontSize.toPx() }
                                         textAlign = Paint.Align.LEFT
                                         this.color = fontColor.toArgb()
                                     }
@@ -111,28 +134,35 @@ fun HourlyPrecipitationForecastWidget(
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 4f), 0f)
                         )
 
-                        DrawQuadraticCurve(
-                            modifier = Modifier.offset(y = (-20).dp),
-                            tripleValuePoint = tripleValuePoint,
-                            canvasSize = graphSize,
-                            graphColor = MaterialTheme.colorScheme.onPrimary
-                        )
-
                         DrawTextInMidOfCurve(
-                            modifier = Modifier.offset(y = (-30).dp),
+                            modifier = Modifier.offset(y = (-20).dp),
                             text = BigDecimal(currentValue.toString())
                                 .setScale(1, RoundingMode.HALF_UP)
                                 .stripTrailingZeros()
                                 .toPlainString(),
                             tripleValuePoint = tripleValuePoint,
                             canvasSize = graphSize,
-                            fontColor = MaterialTheme.colorScheme.onPrimary
+                            fontColor = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = fontSize
+                        )
+
+                        DrawQuadraticCurve(
+                            modifier = Modifier,
+                            tripleValuePoint = tripleValuePoint,
+                            canvasSize = graphSize,
+                            graphColor = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        DrawCurveSideBorders(
+                            tupleValuePoint = tripleValuePoint,
+                            canvasSize = graphSize,
+                            borderBrush = brush
                         )
                     }
 
                     Text(
                         text = "${weather.date.hour}",
-                        fontSize = 12.sp,
+                        fontSize = fontSize,
                         color = fontColor,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -145,7 +175,7 @@ fun HourlyPrecipitationForecastWidget(
 
 @Composable
 private fun DrawPrecipitationLevelLine(
-    canvasSize: Size,
+    canvasSize: DpSize,
     lineColor: Color,
     numOfLines: Int,
     modifier: Modifier = Modifier,
@@ -153,11 +183,14 @@ private fun DrawPrecipitationLevelLine(
 ) {
     val lineHeight = canvasSize.height / numOfLines
 
-    Canvas(modifier = modifier) {
+    Canvas(
+        modifier = modifier
+            .size(canvasSize.width, canvasSize.width)
+    ) {
         for (i in 0 until numOfLines) {
             drawLine(
-                start = Offset(0F.dp.toPx(), (lineHeight * i).dp.toPx()),
-                end = Offset(canvasSize.width.dp.toPx(), (lineHeight * i).dp.toPx()),
+                start = Offset(0F.dp.toPx(), (lineHeight * i).toPx()),
+                end = Offset(canvasSize.width.toPx(), (lineHeight * i).toPx()),
                 color = lineColor,
                 pathEffect = pathEffect
             )
@@ -168,22 +201,23 @@ private fun DrawPrecipitationLevelLine(
 @Composable
 private fun DrawPrecipitationLevelLabel(
     modifier: Modifier = Modifier,
-    canvasSize: Size,
+    canvasSize: DpSize,
     text: List<String>,
     fontColor: Color,
-    fontSize: Float
+    fontSize: TextUnit
 ) {
     val lineHeight = canvasSize.height / text.size
+    val density = LocalDensity.current
 
     Canvas(modifier = modifier) {
         for (i in text.indices) {
             drawContext.canvas.nativeCanvas.apply {
                 drawText(
                     text[i],
-                    0F.dp.toPx(),
-                    (lineHeight * i).dp.toPx(),
+                    0F,
+                    (lineHeight * i).toPx(),
                     Paint().apply {
-                        textSize = fontSize
+                        textSize = density.run { fontSize.toPx() }
                         textAlign = Paint.Align.LEFT
                         this.color = fontColor.toArgb()
                     }
