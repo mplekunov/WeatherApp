@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
+import com.application.weatherapp.ui.theme.Typography
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -45,8 +46,7 @@ fun HourlyUltraVioletIndexForecastWidget(
     Column(modifier = modifier) {
         Text(
             text = "UV-Index",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            style = Typography.titleMedium,
             modifier = Modifier.padding(bottom = 40.dp)
         )
 

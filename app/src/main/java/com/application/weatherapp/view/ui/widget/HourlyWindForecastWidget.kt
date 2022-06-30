@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.application.weatherapp.R
 import com.application.weatherapp.model.graph.*
 import com.application.weatherapp.model.weather.HourlyWeather
+import com.application.weatherapp.ui.theme.Typography
 import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -45,29 +46,26 @@ fun HourlyWindForecastWidget(
     hourlyWeather: HourlyWeather
 ) {
     val fontColor = MaterialTheme.colorScheme.onPrimary
-    val windSpeedFontSize = 40.sp
     val fontSize = (graphSize.width.value / 5).sp
 
     Column(modifier = modifier) {
         Text(
             text = "Wind",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            style = Typography.titleMedium,
             modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Row(Modifier.padding(bottom = 20.dp)) {
             Text(
                 text = "${hourlyWeather.weatherForecast.first().wind.speed.value.toInt()}",
-                fontSize = windSpeedFontSize,
-                fontWeight = FontWeight.Bold,
+                style = Typography.labelLarge,
                 modifier = Modifier
                     .align(Alignment.Bottom)
             )
 
             Text(
                 text = hourlyWeather.weatherForecast.first().wind.speed.unit.unit,
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .padding(start = 4.dp, bottom = 8.dp)
@@ -76,7 +74,7 @@ fun HourlyWindForecastWidget(
             Spacer(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 10.dp)
-                    .height(windSpeedFontSize.value.dp)
+                    .height(Typography.labelLarge.fontSize.value.dp)
                     .align(Alignment.CenterVertically)
                     .background(Color.Gray)
                     .width(2.dp)
@@ -84,7 +82,7 @@ fun HourlyWindForecastWidget(
 
             DirectionIcon(
                 modifier = Modifier
-                    .height(windSpeedFontSize.value.dp)
+                    .height(Typography.labelLarge.fontSize.value.dp)
                     .align(Alignment.CenterVertically),
                 direction = hourlyWeather.weatherForecast.first().wind.direction.value + 180,
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8F)

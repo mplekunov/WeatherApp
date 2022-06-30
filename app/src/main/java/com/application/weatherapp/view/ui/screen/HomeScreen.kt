@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -43,7 +44,8 @@ fun HomeScreen(
     var overviewWidgetHeight by remember { mutableStateOf(0.dp) }
     var temperatureWidgetHeight by remember { mutableStateOf(0.dp) }
 
-    val spacerHeight = screenHeight - overviewWidgetHeight - temperatureWidgetHeight - with(density) { 20f.toDp() }
+    val spacerHeight =
+        screenHeight - overviewWidgetHeight - temperatureWidgetHeight - with(density) { 20f.toDp() }
 
     val widgetModifier = Modifier
         .padding(
@@ -60,14 +62,16 @@ fun HomeScreen(
         .background(Color.Gray)
         .height(1.dp)
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) { focusRequester.requestFocus() }
-        .focusRequester(focusRequester)
-        .focusable()
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { focusRequester.requestFocus() }
+            .focusRequester(focusRequester)
+            .focusable(),
+        color = MaterialTheme.colorScheme.primary
     ) {
         Column(
             modifier = Modifier
