@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import androidx.compose.ui.window.Popup
 import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.network.api.service.MetNorwayApi
 import com.application.weatherapp.network.api.service.NominatimApi
+import com.application.weatherapp.ui.theme.Typography
 import com.application.weatherapp.ui.theme.WeatherAppTheme
 import com.application.weatherapp.view.ui.animation.PopupComponentAnimation
 import com.application.weatherapp.view.ui.animation.WaitAnimation
@@ -74,11 +76,11 @@ fun PermissionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(2.dp)
-                        .background(Color.Gray)
+                        .background(MaterialTheme.colorScheme.onPrimary)
                 )
                 Column(
                     modifier = Modifier
-                        .background(Color.DarkGray)
+                        .background(MaterialTheme.colorScheme.secondary)
                         .fillMaxWidth()
                         .weight(0.3f)
                         .padding(8.dp)
@@ -101,14 +103,14 @@ fun PermissionScreen(
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = "Location",
-                                tint = MaterialTheme.colorScheme.onTertiary,
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
-                                    .padding(0.dp)
                                     .fillMaxHeight()
                             )
 
                             Text(
                                 text = "REQUEST LOCATION ACCESS",
+                                fontSize = Typography.labelMedium.fontSize,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .align(Alignment.Center),
@@ -144,15 +146,16 @@ private fun LocationPermissionPopup(
             startHeight = maxHeight
         ) {
             Surface(
-                modifier = modifier,
+                modifier = modifier
+                    .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
                 shape = RoundedCornerShape(8.dp),
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.secondary
             ) {
                 Column {
                     Box {
                         Box(
                             modifier = Modifier
-                                .background(Color.Blue)
+                                .background(MaterialTheme.colorScheme.surface)
                                 .fillMaxWidth()
                                 .height(150.dp)
                         )
@@ -160,7 +163,7 @@ private fun LocationPermissionPopup(
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = "Location",
-                            tint = MaterialTheme.colorScheme.onTertiary,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .size(60.dp)
@@ -190,12 +193,12 @@ private fun LocationPermissionPopup(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.LightGray)
+                            .background(MaterialTheme.colorScheme.surface)
                             .padding(start = 12.dp, end = 18.dp, top = 4.dp, bottom = 4.dp)
                     ) {
                         Spacer(
                             modifier = Modifier
-                                .weight(.4f)
+                                .weight(.3f)
                         )
 
                         Button(
@@ -210,7 +213,8 @@ private fun LocationPermissionPopup(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Cancel"
+                                text = "Cancel",
+                                style = Typography.labelMedium
                             )
                         }
 
@@ -223,7 +227,8 @@ private fun LocationPermissionPopup(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Continue"
+                                text = "Continue",
+                                style = Typography.labelMedium
                             )
                         }
                     }

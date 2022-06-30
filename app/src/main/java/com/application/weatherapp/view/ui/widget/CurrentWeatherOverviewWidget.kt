@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.application.weatherapp.model.weather.DailyWeather
+import com.application.weatherapp.ui.theme.Typography
 import com.application.weatherapp.view.ui.icon.getWeatherIconPainter
 import com.application.weatherapp.viewmodel.DateTimeViewModel
 
@@ -33,6 +34,7 @@ fun CurrentWeatherOverviewWidget(
         // Day/Night Temperatures
         Text(
             text = "Day ${dailyWeather.dayTemperature.value.toInt()} Night ${dailyWeather.nightTemperature.value.toInt()}",
+            style = Typography.labelMedium,
             modifier = Modifier
         )
 
@@ -54,11 +56,13 @@ private fun DateTimeOverview(
 ) {
     Box(modifier = modifier) {
         Text(
-            text = date
+            text = date,
+            style = Typography.labelMedium
         )
 
         Text(
             text = time,
+            style = Typography.labelMedium,
             modifier = Modifier.align(Alignment.CenterEnd)
         )
     }
@@ -78,12 +82,12 @@ private fun CurrentWeatherOverview(
         ) {
             Text(
                 text = "${dailyWeather.hourlyWeather.weatherForecast.first().currentTemperature.value.toInt()}",
-                fontSize = 86.sp,
+                style = Typography.titleLarge
             )
 
             Text(
                 text = "Feels like ${dailyWeather.hourlyWeather.weatherForecast.first().feelingTemperature.value.toInt()}",
-                fontSize = 12.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
@@ -103,7 +107,7 @@ private fun CurrentWeatherOverview(
 
             Text(
                 text = dailyWeather.hourlyWeather.weatherForecast.first().weatherDescription,
-                fontSize = 12.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )

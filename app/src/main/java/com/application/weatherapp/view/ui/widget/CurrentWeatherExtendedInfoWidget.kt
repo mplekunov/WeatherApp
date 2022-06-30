@@ -7,9 +7,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.weatherapp.model.weather.DailyWeather
+import com.application.weatherapp.ui.theme.Typography
+import com.application.weatherapp.viewmodel.sample.SampleHourlyWeatherProvider
+
+@Composable
+@Preview
+private fun PreviewCurrentWeatherExtendedInfoWidget() {
+//    CurrentWeatherExtendedInfoWidget(
+//        modifier = Modifier,
+//        dailyWeather = SampleHourlyWeatherProvider().
+//    )
+}
 
 @Composable
 fun CurrentWeatherExtendedInfoWidget(
@@ -19,15 +31,14 @@ fun CurrentWeatherExtendedInfoWidget(
     Column(modifier = modifier) {
         Text(
             text = "Currently",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            style = Typography.titleMedium,
             modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Row(modifier = Modifier.padding(bottom = 4.dp)) {
             Text(
                 text = "Cloud cover",
-                fontSize = 16.sp
+                style = Typography.labelMedium
             )
 
             Text(
@@ -35,7 +46,7 @@ fun CurrentWeatherExtendedInfoWidget(
                     "%.1f",
                     dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.value
                 ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.cloudCover?.unit?.unit}",
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier.padding(start = 40.dp)
             )
         }
@@ -43,7 +54,7 @@ fun CurrentWeatherExtendedInfoWidget(
         Row(modifier = Modifier.padding(bottom = 4.dp)) {
             Text(
                 text = "Humidity",
-                fontSize = 16.sp
+                style = Typography.labelMedium
             )
 
             Text(
@@ -51,7 +62,7 @@ fun CurrentWeatherExtendedInfoWidget(
                     "%.1f",
                     dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.value
                 ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.humidity?.unit?.unit}",
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier.padding(start = 57.dp)
             )
         }
@@ -59,7 +70,7 @@ fun CurrentWeatherExtendedInfoWidget(
         Row(modifier = Modifier.padding(bottom = 4.dp)) {
             Text(
                 text = "Pressure",
-                fontSize = 16.sp
+                style = Typography.labelMedium
             )
 
             Text(
@@ -67,7 +78,7 @@ fun CurrentWeatherExtendedInfoWidget(
                     "%.2f",
                     dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.value
                 ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.pressure?.unit?.unit}",
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier.padding(start = 63.dp)
             )
         }
@@ -75,7 +86,7 @@ fun CurrentWeatherExtendedInfoWidget(
         Row(modifier = Modifier.padding(bottom = 4.dp)) {
             Text(
                 text = "Dew point",
-                fontSize = 16.sp
+                style = Typography.labelMedium
             )
 
             Text(
@@ -83,7 +94,7 @@ fun CurrentWeatherExtendedInfoWidget(
                     "%.1f",
                     dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.value
                 ) + " ${dailyWeather?.hourlyWeather?.weatherForecast?.first()?.dewPoint?.temperature?.unit?.unit}",
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 modifier = Modifier.padding(start = 51.dp)
             )
         }
