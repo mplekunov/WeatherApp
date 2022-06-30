@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
@@ -40,6 +41,7 @@ import com.application.weatherapp.android.service.location.LocationService
 import com.application.weatherapp.model.Location
 import com.application.weatherapp.network.api.service.MetNorwayApi
 import com.application.weatherapp.network.api.service.NominatimApi
+import com.application.weatherapp.ui.theme.Typography
 import com.application.weatherapp.view.ui.animation.PopupComponentAnimation
 import com.application.weatherapp.view.ui.button.CircleButton
 import com.application.weatherapp.view.ui.text.EmptyTextToolbar
@@ -124,6 +126,7 @@ fun LocationSearchBar(
                 onDone = { _focusManager.clearFocus() }
             ),
             modifier = modifier
+                .border(2.dp, MaterialTheme.colorScheme.surface, shape)
                 .onFocusChanged { focusState ->
                     hasFocus = focusState.hasFocus
                 }
@@ -148,7 +151,7 @@ fun LocationSearchBar(
                 MenuButton(modifier = Modifier.padding(start = 4.dp))
             },
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.secondary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -173,18 +176,11 @@ fun LocationSearchBar(
             shape = shape,
             locations = locations.value!!,
             modifier = modifier
-                .fillMaxWidth()
                 .padding(top = 4.dp)
-                .shadow(
-                    elevation = 4.dp,
-                    shape = shape,
-                    clip = true,
-                    ambientColor = Color.Gray,
-                    spotColor = Color.Gray
-                )
+                .border(2.dp, MaterialTheme.colorScheme.surface, shape)
+                .fillMaxWidth()
         )
     }
-
 }
 
 @Composable
@@ -199,7 +195,7 @@ private fun MenuButton(
         Icon(
             imageVector = Icons.Default.Menu,
             contentDescription = "Menu",
-            tint = MaterialTheme.colorScheme.onTertiary,
+            tint = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }
@@ -234,7 +230,7 @@ private fun LocationButton(
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = "Location",
-            tint = MaterialTheme.colorScheme.onTertiary
+            tint = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }
@@ -295,7 +291,7 @@ private fun QueryResultPopup(
                                     )
                                     .fillMaxWidth()
                                     .height(1.dp)
-                                    .background(Color.Gray)
+                                    .background(MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.7f))
                             )
                         }
                     }
@@ -328,7 +324,7 @@ private fun LocationText(
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = "Location",
-            tint = MaterialTheme.colorScheme.onTertiary,
+            tint = MaterialTheme.colorScheme.onSecondary,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(12.dp)
@@ -337,14 +333,13 @@ private fun LocationText(
         Column {
             Text(
                 text = headerText,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                style = Typography.labelMedium,
                 textAlign = TextAlign.Left
             )
 
             Text(
                 text = address.toString(),
-                fontSize = 16.sp,
+                style = Typography.labelMedium,
                 textAlign = TextAlign.Left
             )
         }
@@ -395,7 +390,7 @@ private fun UploadingPopup(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(barHeight)
-                            .background(Color.Gray)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                 }
 
@@ -407,7 +402,7 @@ private fun UploadingPopup(
                         Modifier
                             .width(insideBarWidth)
                             .height(barHeight)
-                            .background(Color.DarkGray)
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                 }
             }

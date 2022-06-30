@@ -19,7 +19,7 @@ import androidx.core.view.ViewCompat
 private val DarkColorScheme = darkColorScheme(
     primary = Black,
     onPrimary = White,
-    secondary = DarkGrey,
+    secondary = LightGrey,
     onSecondary = White,
     surface = DarkGrey,
     onSurface = White

@@ -87,7 +87,7 @@ private fun CurrentWeatherOverview(
 
             Text(
                 text = "Feels like ${dailyWeather.hourlyWeather.weatherForecast.first().feelingTemperature.value.toInt()}",
-                style = Typography.titleMedium,
+                style = Typography.labelMedium,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
