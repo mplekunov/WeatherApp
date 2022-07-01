@@ -7,6 +7,7 @@
 - Uses Nominatim API for Geolocation/Geocoder searches
 - Uses MetNorway API for weather forecast
 - Have custom graphs and small graph library for drawing graphs for new widgets for ease of widget implementation
+- Uses JetPack Compose for ease of UI implementation (finally we can get rid of markup language UI's)
 
 This program allows user to look at weather forecast provided by given API at any location in the world.
 
